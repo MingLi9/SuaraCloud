@@ -1,0 +1,14 @@
+services:
+  frontend:
+    image: mingli99/frontend:latest # Use your Docker Hub image
+    ports:
+      - "3000:3000"
+    networks:
+      - suara-cloud
+    environment:
+      REACT_APP_GATEWAY_URL: "http://docker-env:8000"
+    restart: on-failure
+
+networks:
+  suara-cloud:
+    driver: bridge
