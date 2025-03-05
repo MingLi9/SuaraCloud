@@ -1,0 +1,41 @@
+name: CI-CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - dev
+      - setup
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        folder: [frontend]
+
+    env:
+      REACT_APP_GATEWAY_URL: ${{ secrets.REACT_APP_GATEWAY_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Navigate to folder and install dependencies
+        run: |
+          cd ${{ matrix.folder }}
+          npm install
+
+      - name: Run tests
+        run: |
+          cd ${{ matrix.folder }}
+          npm test

@@ -1,0 +1,15 @@
+*/.env*
+*/build
+*/coverage
+*/node_modules
+*/.pnp
+*.pnp.js
+*/public
+*/.cache
+*/.vscode
+*/.DS_Store
+*/package-lock.json
+*/npm-debug.log*
+*/yarn.lock
+*/yarn-error.log*
+*/yarn-debug.log*
