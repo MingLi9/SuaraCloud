@@ -14,4 +14,7 @@ module.exports = {
     coverageReporters: ["text", "lcov", "json", "html"],
     testEnvironment: "jsdom",
     setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+    moduleNameMapper: {
+        '\\.(css|less|sass|scss)$': 'identity-obj-proxy'
+    },
 };

@@ -39,4 +39,4 @@ jobs:
       - name: Run tests
         run: |
           cd ${{ matrix.folder }}
-          npm test -- --coverage
+          npm test
