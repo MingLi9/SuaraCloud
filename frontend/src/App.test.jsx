@@ -9,7 +9,6 @@ test('Always pass', () => {
 
 test('renders gateway_url correctly', () => {
   render(<App />);
-  screen.debug();
   const gatewayText = screen.getByText(`gateway_url = ${gatewayUrl}`);
   expect(gatewayText).toBeInTheDocument();
 });
