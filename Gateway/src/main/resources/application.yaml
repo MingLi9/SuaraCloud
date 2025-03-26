@@ -1,0 +1,20 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: Gateway
+  cloud:
+    gateway:
+       routes:
+        - id: demoservice
+          uri: lb://DEMOSERVICE
+          predicates:
+            - Path=/demo/**
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    registerWithEureka: true
+    fetchRegistry: true
