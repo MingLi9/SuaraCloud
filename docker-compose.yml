@@ -1,13 +1,28 @@
 services:
   frontend:
-    image: mingli99/frontend:latest # Use your Docker Hub image
+    image: mingli99/frontend:latest
     ports:
       - "3000:3000"
     networks:
       - suara-cloud
     environment:
       REACT_APP_GATEWAY_URL: "http://docker-env:8000"
-    restart: on-failure
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+      - '1883:1883'
+    environment:
+      - 'RABBITMQ_DEFAULT_PASS=secret'
+      - 'RABBITMQ_DEFAULT_USER=myuser'
+    networks:
+      - suara-cloud
+    command: |
+      bash -c "rabbitmq-plugins enable --offline rabbitmq_mqtt && rabbitmq-server"
+    restart: always
 
 networks:
   suara-cloud:
