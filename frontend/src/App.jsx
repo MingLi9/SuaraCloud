@@ -7,7 +7,11 @@ function App() {
   // sent api call to the gateway url using Axios
   const [data, setData] = useState(null);
   useEffect(() => {
-    axios.post(`${gatewayUrl}/demo/mqtt`, { data: 'test' })
+    axios.post(`${gatewayUrl}/demo/mqtt`, "test", {
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
       .then(response => {
         setData(response.data);
       })
