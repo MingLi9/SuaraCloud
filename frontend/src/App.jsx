@@ -22,7 +22,9 @@ function App() {
 
   return (
     <div className="App">
-      gateway_url = {gatewayUrl}
+      <div data-testid="gateway_url">
+        gateway_url = {gatewayUrl}
+      </div>
       data = {data}
       <audio controls preload='auto' src='https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' />
     </div>
