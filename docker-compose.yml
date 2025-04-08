@@ -8,6 +8,8 @@ services:
     environment:
       REACT_APP_GATEWAY_URL: "http://localhost:8085"
     restart: always
+    depends_on:
+      - gateway
 
   rabbitmq:
     image: rabbitmq:management
@@ -23,6 +25,44 @@ services:
     command: |
       bash -c "rabbitmq-plugins enable --offline rabbitmq_mqtt && rabbitmq-server"
     restart: always
+
+  eureka:
+    image: mingli99/eureka:latest
+    ports:
+      - "8761:8761"
+    networks:
+      - suara-cloud
+    restart: always
+
+  gateway:
+    image: mingli99/gateway:latest
+    ports:
+      - "8085:8085"
+    networks:
+      - suara-cloud
+    environment:
+      - EUREKA_URL=http://eureka:8761/eureka/
+    restart: always
+    depends_on:
+      - eureka
+  
+  demo-api:
+    image: mingli99/demo-api:latest
+    ports:
+      - "9090:9090"
+    networks:
+      - suara-cloud
+    environment:
+      - RABBITMQ_URL=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=myuser
+      - RABBITMQ_PW=secret
+      - EUREKA_URL=http://eureka:8761/eureka/
+    restart: always
+    depends_on:
+      - eureka
+      - rabbitmq
+
 
 networks:
   suara-cloud:

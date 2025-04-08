@@ -5,13 +5,13 @@ spring:
   application:
     name: demoservice
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: myuser
-    password: secret
+    host: ${RABBITMQ_URL}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PW}
     virtual-host: /
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_URL}
