@@ -95,18 +95,17 @@ jobs:
               run: |
                   # 'services' environment variable is set by the step above
                   for service in $(echo $services | jq -r '.[]'); do
-                    # If the folder is "DemoService", name the image "demo-api"
-                    if [ "$service" = "DemoService" ]; then
+                    # Convert folder name to lowercase
+                    lowercase_service="$(echo "$service" | tr '[:upper:]' '[:lower:]')"
+
+                    # Special case: If the lowercase folder name is 'demoservice', rename to 'demo-api'
+                    if [ "$lowercase_service" = "demoservice" ]; then
                       image_name="demo-api"
                     else
-                      # Otherwise, name the image based on the folder
-                      # (e.g., "frontend", "Gateway", "Eureka")
-                      image_name="$service"
+                      image_name="$lowercase_service"
                     fi
 
-                    # e.g., username/DemoService or username/demo-api
                     DOCKER_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/$image_name:latest"
-
                     echo "Building and pushing $DOCKER_IMAGE from folder '$service'..."
 
                     docker build -t "$DOCKER_IMAGE" "$service"
