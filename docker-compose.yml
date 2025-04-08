@@ -6,7 +6,7 @@ services:
     networks:
       - suara-cloud
     environment:
-      REACT_APP_GATEWAY_URL: "http://docker-env:8000"
+      REACT_APP_GATEWAY_URL: "http://localhost:8085"
     restart: always
 
   rabbitmq:
