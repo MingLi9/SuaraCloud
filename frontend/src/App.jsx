@@ -6,6 +6,7 @@ import axios from 'axios';
 function App() {
   // sent api call to the gateway url using Axios
   const [data, setData] = useState(null);
+  const song_url = `${gatewayUrl}/songs/toto`;
   useEffect(() => {
     axios.post(`${gatewayUrl}/demo/mqtt`, "test", {
       headers: {
@@ -26,7 +27,7 @@ function App() {
         gateway_url = {gatewayUrl}
       </div>
       data = {data}
-      <audio controls preload='auto' src='https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' />
+      <audio controls preload='auto' src={song_url} />
     </div>
   );
 }

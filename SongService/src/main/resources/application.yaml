@@ -1,0 +1,22 @@
+server:
+  port: 9091
+
+spring:
+  application:
+    name: SongService
+  rabbitmq:
+    host: ${RABBITMQ_URL}
+#    host: rabbitmq
+    port: ${RABBITMQ_PORT}
+#    port: 5672
+    username: ${RABBITMQ_USER}
+#    username: myuser
+    password: ${RABBITMQ_PW}
+#    password: secret
+    virtual-host: /
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL}
+#      defaultZone: http://localhost:8761/eureka/

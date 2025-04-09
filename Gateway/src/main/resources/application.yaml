@@ -11,6 +11,10 @@ spring:
           uri: lb://DEMOSERVICE
           predicates:
             - Path=/demo/**
+        - id: songservice
+          uri: lb://SONGSERVICE
+          predicates:
+            - Path=/songs/**
 
 eureka:
   client:
