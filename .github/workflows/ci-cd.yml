@@ -94,8 +94,8 @@ jobs:
             - name: Check if Dockerfiles or Relevant Files Changed
               id: check-changes
               run: |
-                  # Get the list of changed files in the current commit
-                  changed_files=$(git diff --name-only $GITHUB_SHA^..$GITHUB_SHA)
+                  # Get the list of changed files in the current commit (using HEAD~1 to get the previous commit)
+                  changed_files=$(git diff --name-only HEAD~1..HEAD)
 
                   # Initialize a variable to track if any relevant service needs a rebuild
                   DOCKER_REBUILD=false
