@@ -63,6 +63,22 @@ services:
       - eureka
       - rabbitmq
 
+  song-service:
+    image: mingli99/song-service:latest
+    ports:
+      - "9091:9091"
+    networks:
+      - suara-cloud
+    environment:
+      - RABBITMQ_URL=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=myuser
+      - RABBITMQ_PW=secret
+      - EUREKA_URL=http://eureka:8761/eureka/
+    restart: always
+    depends_on:
+      - eureka
+      - rabbitmq
 
 networks:
   suara-cloud:
