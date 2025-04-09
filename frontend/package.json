@@ -5,6 +5,7 @@
   "dependencies": {
     "@testing-library/dom": "10.4.0",
     "@testing-library/user-event": "13.5.0",
+    "axios": "^1.8.4",
     "jest-dom": "4.0.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
@@ -36,11 +37,14 @@
     ]
   },
   "devDependencies": {
-    "@babel/preset-env": "7.26.9",
+    "@babel/core": "^7.26.10",
+    "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "7.26.3",
+    "@playwright/test": "^1.51.1",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.2.0",
-    "babel-jest": "29.7.0",
+    "@types/node": "^22.14.0",
+    "babel-jest": "^29.7.0",
     "dotenv": "16.4.7",
     "jest": "27.5.1"
   }
