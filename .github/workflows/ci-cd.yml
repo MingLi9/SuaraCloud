@@ -116,6 +116,7 @@ jobs:
                   else
                       echo "No changes detected in Dockerfiles or relevant service files, skipping Docker image rebuild."
                       echo "DOCKER_REBUILD=false" >> $GITHUB_ENV
+                  fi
 
             - name: Build and Push Docker Images
               if: env.DOCKER_REBUILD == 'true'
