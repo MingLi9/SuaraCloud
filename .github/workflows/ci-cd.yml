@@ -87,18 +87,27 @@ jobs:
             - name: Find All Services with Dockerfile
               id: find-services
               run: |
-                  # This finds every Dockerfile and extracts its parent folder name
                   folders=$(find . -type f -name "Dockerfile" -exec dirname {} \; | cut -c 3- | jq -R -s -c 'split("\n")[:-1]')
                   echo "services=$folders" >> $GITHUB_ENV
 
-            - name: Build and Push Docker Images
+            - name: Check if Dockerfiles or Relevant Files Changed
+              id: check-changes
               run: |
-                  # 'services' environment variable is set by the step above
+                  # Check if the Dockerfile or relevant files have changed
+                  changed_files=$(git diff --name-only $GITHUB_SHA^..$GITHUB_SHA)
+                  if echo "$changed_files" | grep -qE 'Dockerfile|frontend/package.json|backend/package.json'; then
+                    echo "Changes detected, rebuilding Docker images..."
+                    echo "DOCKER_REBUILD=true" >> $GITHUB_ENV
+                  else
+                    echo "No changes in Dockerfiles or relevant files, skipping Docker image rebuild."
+                    echo "DOCKER_REBUILD=false" >> $GITHUB_ENV
+
+            - name: Build and Push Docker Images
+              if: env.DOCKER_REBUILD == 'true'
+              run: |
                   for service in $(echo $services | jq -r '.[]'); do
-                    # Convert folder name to lowercase
                     lowercase_service="$(echo "$service" | tr '[:upper:]' '[:lower:]')"
 
-                    # Special case: If the lowercase folder name is 'demoservice', rename to 'demo-api'
                     if [ "$lowercase_service" = "demoservice" ]; then
                       image_name="demo-api"
                     else
