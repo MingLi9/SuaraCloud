@@ -1,0 +1,58 @@
+on:
+    workflow_call:
+        inputs:
+            directory:
+                required: true
+                type: string
+                default: "."
+            SONAR_PROJECT_KEY:
+                required: true
+                type: string
+
+jobs:
+    SonarCloud:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Setup JDK
+              uses: actions/setup-java@v3
+              with:
+                  java-version: "21"
+                  distribution: "temurin"
+                  cache: "maven"
+
+            - name: Build
+              working-directory: ${{ inputs.directory }}
+              run: mvn clean package
+
+            - name: Run tests
+              working-directory: ${{ inputs.directory }}
+              run: mvn test
+
+            - name: Cache SonarQube packages
+              uses: actions/cache@v4
+              with:
+                  path: ~/.sonar/cache
+                  key: ${{ runner.os }}-sonar
+                  restore-keys: ${{ runner.os }}-sonar
+
+            - name: Cache Maven packages
+              uses: actions/cache@v4
+              with:
+                  path: ~/.m2
+                  key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+
+            - name: SonarCloud Scan (Music)
+              uses: SonarSource/sonarcloud-github-action@master
+              with:
+                  projectBaseDir: ${{ inputs.directory }}
+                  args: >
+                      -Dsonar.projectKey=${{ inputs.SONAR_PROJECT_KEY }}
+                      -Dsonar.organization=scarletbobcat
+                      -Dsonar.java.binaries=target/classes
+              env:
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

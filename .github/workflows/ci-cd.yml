@@ -50,22 +50,78 @@ jobs:
                   retention-days: 1
               if: matrix.folder == 'frontend'
 
-    sonarqube:
-        name: SonarQube
+    DetectChanges:
         runs-on: ubuntu-latest
-        needs: build-and-test
+        outputs:
+            frontend: ${{ steps.filter.outputs.frontend }}
+            gateway: ${{ steps.filter.outputs.gateway }}
+            eureka: ${{ steps.filter.outputs.eureka }}
+            SongService: ${{ steps.filter.outputs.SongService }}
         steps:
-            - uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
+            - name: Checkout
+              uses: actions/checkout@v4
 
-            - name: Run SonarQube scan for ${{ matrix.folder }}
-              uses: SonarSource/sonarqube-scan-action@v5
-              env:
-                  sonar-project-key: ${{ secrets.SONAR_PROJECT_KEY }}
-                  sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
-                  sonar-login: ${{ secrets.SONAR_TOKEN }}
-                  sonar-sources: ${{ matrix.folder }}
+            - name: Detect folder changes
+              id: filter
+              uses: dorny/paths-filter@v3
+              with:
+                  filters: |
+                      frontend:
+                        - 'frontend/**'
+                      gateway:
+                        - 'Gateway/**'
+                      eureka:
+                        - 'Eureka/**'
+                      SongService:
+                        - 'SongService/**'
+
+    Frontend:
+        needs: DetectChanges
+        if: needs.DetectChanges.outputs.frontend == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "14"
+
+            - name: Install dependencies
+              working-directory: ./frontend
+              run: npm install
+
+            - name: Build
+              working-directory: ./frontend
+              run: npm run build
+
+    Gateway:
+        # needs: DetectChanges
+        # if: needs.DetectChanges.outputs.gateway == 'true'
+        uses: MingLi9/SuaraCloud/.github/workflows/java.yml@main
+        with:
+            directory: ./Gateway
+            SONAR_PROJECT_KEY: SuaraCloud_gateway
+        secrets: inherit
+
+    Eureka:
+        # needs: DetectChanges
+        # if: needs.DetectChanges.outputs.eureka == 'true'
+        uses: MingLi9/SuaraCloud/.github/workflows/java.yml@main
+        with:
+            directory: ./Eureka
+            SONAR_PROJECT_KEY: SuaraCloud_eureka
+        secrets: inherit
+
+    SongService:
+        # needs: DetectChanges
+        # if: needs.DetectChanges.outputs.users == 'true'
+        uses: MingLi9/SuaraCloud/.github/workflows/java.yml@main
+        with:
+            directory: ./SongService
+            SONAR_PROJECT_KEY: SuaraCloud_users
+        secrets: inherit
 
     docker-build-and-push:
         name: Build & Push Docker Images
