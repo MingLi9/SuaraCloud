@@ -52,7 +52,7 @@ jobs:
                   projectBaseDir: ${{ inputs.directory }}
                   args: >
                       -Dsonar.projectKey=${{ inputs.SONAR_PROJECT_KEY }}
-                      -Dsonar.organization=MingLi9
+                      -Dsonar.organization=mingli9
                       -Dsonar.java.binaries=target/classes
               env:
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
