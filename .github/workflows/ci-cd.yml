@@ -87,36 +87,49 @@ jobs:
             - name: Find All Services with Dockerfile
               id: find-services
               run: |
+                  # Find folders containing Dockerfiles and add them to the environment variable
                   folders=$(find . -type f -name "Dockerfile" -exec dirname {} \; | cut -c 3- | jq -R -s -c 'split("\n")[:-1]')
                   echo "services=$folders" >> $GITHUB_ENV
 
             - name: Check if Dockerfiles or Relevant Files Changed
               id: check-changes
               run: |
-                  # Check if the Dockerfile or relevant files have changed
+                  # Get the list of changed files in the current commit
                   changed_files=$(git diff --name-only $GITHUB_SHA^..$GITHUB_SHA)
-                  if echo "$changed_files" | grep -qE 'Dockerfile|frontend/package.json|backend/package.json'; then
-                    echo "Changes detected, rebuilding Docker images..."
-                    echo "DOCKER_REBUILD=true" >> $GITHUB_ENV
+
+                  # Initialize a variable to track if any relevant service needs a rebuild
+                  DOCKER_REBUILD=false
+
+                  # Loop over each service folder and check if any relevant files have changed
+                  for service in $(echo $services | jq -r '.[]'); do
+                      if echo "$changed_files" | grep -qE "^$service/"; then
+                          echo "Changes detected in $service, rebuilding Docker image..."
+                          DOCKER_REBUILD=true
+                      fi
+                  done
+
+                  if [ "$DOCKER_REBUILD" = true ]; then
+                      echo "DOCKER_REBUILD=true" >> $GITHUB_ENV
                   else
-                    echo "No changes in Dockerfiles or relevant files, skipping Docker image rebuild."
-                    echo "DOCKER_REBUILD=false" >> $GITHUB_ENV
+                      echo "No changes detected in Dockerfiles or relevant service files, skipping Docker image rebuild."
+                      echo "DOCKER_REBUILD=false" >> $GITHUB_ENV
 
             - name: Build and Push Docker Images
               if: env.DOCKER_REBUILD == 'true'
               run: |
                   for service in $(echo $services | jq -r '.[]'); do
-                    lowercase_service="$(echo "$service" | tr '[:upper:]' '[:lower:]')"
+                      lowercase_service="$(echo "$service" | tr '[:upper:]' '[:lower:]')"
 
-                    if [ "$lowercase_service" = "demoservice" ]; then
-                      image_name="demo-api"
-                    else
-                      image_name="$lowercase_service"
-                    fi
+                      # Special case for renaming services if necessary
+                      if [ "$lowercase_service" = "demoservice" ]; then
+                          image_name="demo-api"
+                      else
+                          image_name="$lowercase_service"
+                      fi
 
-                    DOCKER_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/$image_name:latest"
-                    echo "Building and pushing $DOCKER_IMAGE from folder '$service'..."
+                      DOCKER_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/$image_name:latest"
+                      echo "Building and pushing $DOCKER_IMAGE from folder '$service'..."
 
-                    docker build -t "$DOCKER_IMAGE" "$service"
-                    docker push "$DOCKER_IMAGE"
+                      docker build -t "$DOCKER_IMAGE" "$service"
+                      docker push "$DOCKER_IMAGE"
                   done
