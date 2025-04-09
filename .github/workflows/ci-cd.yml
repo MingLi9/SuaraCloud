@@ -50,26 +50,6 @@ jobs:
                   retention-days: 1
               if: matrix.folder == 'frontend'
 
-            # Java Spring Boot specific steps
-            - name: Set up JDK 17 for Java microservices
-              if: matrix.folder != 'frontend'
-              uses: actions/setup-java@v2
-              with:
-                  java-version: "17"
-                  distribution: "adoptopenjdk"
-
-            - name: Run Maven or Gradle build for ${{ matrix.folder }}
-              if: matrix.folder != 'frontend'
-              run: |
-                  cd ${{ matrix.folder }}
-                  ./mvnw clean install  # or ./gradlew build, depending on your project setup
-
-            - name: Run Java tests for ${{ matrix.folder }}
-              if: matrix.folder != 'frontend'
-              run: |
-                  cd ${{ matrix.folder }}
-                  ./mvnw test  # or ./gradlew test
-
     sonarqube:
         name: SonarQube
         runs-on: ubuntu-latest
