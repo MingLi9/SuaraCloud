@@ -116,11 +116,11 @@ jobs:
 
     SongService:
         # needs: DetectChanges
-        # if: needs.DetectChanges.outputs.users == 'true'
+        # if: needs.DetectChanges.outputs.SongService == 'true'
         uses: MingLi9/SuaraCloud/.github/workflows/java.yml@main
         with:
             directory: ./SongService
-            SONAR_PROJECT_KEY: SuaraCloud_users
+            SONAR_PROJECT_KEY: SuaraCloud_songservice
         secrets: inherit
 
     docker-build-and-push:
