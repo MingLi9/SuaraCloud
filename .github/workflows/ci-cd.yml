@@ -58,14 +58,18 @@ jobs:
             - uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-              env:
-                  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-                  SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
-                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
             - name: Run SonarQube scan for ${{ matrix.folder }}
+              env:
+                  SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+                  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
               run: |
-                  sonar-scanner -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.sources=${{ matrix.folder }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+                  sonar-scanner \
+                      -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+                      -Dsonar.sources=${{ matrix.folder }} \
+                      -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+                      -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
     docker-build-and-push:
         name: Build & Push Docker Images
