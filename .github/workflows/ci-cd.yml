@@ -62,14 +62,7 @@ jobs:
             - name: Set up SonarQube Scanner for all services
               uses: SonarSource/sonarqube-scan-action@v5
 
-            - name: Run SonarQube scan for frontend
-              if: matrix.folder == 'frontend'
-              run: |
-                  sonar-scanner -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.sources=frontend -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
-            # SonarQube scan for Java microservices (Spring Boot)
             - name: Run SonarQube scan for ${{ matrix.folder }}
-              if: matrix.folder != 'frontend'
               run: |
                   sonar-scanner -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.sources=${{ matrix.folder }} -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 

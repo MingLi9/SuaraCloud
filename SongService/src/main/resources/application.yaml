@@ -5,18 +5,13 @@ spring:
   application:
     name: SongService
   rabbitmq:
-    host: ${RABBITMQ_URL}
-#    host: rabbitmq
-    port: ${RABBITMQ_PORT}
-#    port: 5672
-    username: ${RABBITMQ_USER}
-#    username: myuser
-    password: ${RABBITMQ_PW}
-#    password: secret
+    host: ${RABBITMQ_URL:rabbitmq}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:myuser}
+    password: ${RABBITMQ_PW:secret}
     virtual-host: /
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: ${EUREKA_URL}
-#      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}

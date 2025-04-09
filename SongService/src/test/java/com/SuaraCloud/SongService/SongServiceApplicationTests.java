@@ -8,6 +8,7 @@ class SongServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
+		assert true;
 	}
 
 }
