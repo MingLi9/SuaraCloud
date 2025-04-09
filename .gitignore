@@ -1,5 +1,6 @@
 */.env*
 */build
+*/target
 */coverage
 */node_modules
 */.pnp

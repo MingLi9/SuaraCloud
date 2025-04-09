@@ -1,13 +1,68 @@
 services:
   frontend:
-    image: mingli99/frontend:latest # Use your Docker Hub image
+    image: mingli99/frontend:latest
     ports:
       - "3000:3000"
     networks:
       - suara-cloud
     environment:
-      REACT_APP_GATEWAY_URL: "http://docker-env:8000"
-    restart: on-failure
+      REACT_APP_GATEWAY_URL: "http://localhost:8085"
+    restart: always
+    depends_on:
+      - gateway
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+      - '1883:1883'
+    environment:
+      - 'RABBITMQ_DEFAULT_PASS=secret'
+      - 'RABBITMQ_DEFAULT_USER=myuser'
+    networks:
+      - suara-cloud
+    command: |
+      bash -c "rabbitmq-plugins enable --offline rabbitmq_mqtt && rabbitmq-server"
+    restart: always
+
+  eureka:
+    image: mingli99/eureka:latest
+    ports:
+      - "8761:8761"
+    networks:
+      - suara-cloud
+    restart: always
+
+  gateway:
+    image: mingli99/gateway:latest
+    ports:
+      - "8085:8085"
+    networks:
+      - suara-cloud
+    environment:
+      - EUREKA_URL=http://eureka:8761/eureka/
+    restart: always
+    depends_on:
+      - eureka
+  
+  demo-api:
+    image: mingli99/demo-api:latest
+    ports:
+      - "9090:9090"
+    networks:
+      - suara-cloud
+    environment:
+      - RABBITMQ_URL=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=myuser
+      - RABBITMQ_PW=secret
+      - EUREKA_URL=http://eureka:8761/eureka/
+    restart: always
+    depends_on:
+      - eureka
+      - rabbitmq
+
 
 networks:
   suara-cloud:
