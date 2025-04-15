@@ -26,6 +26,10 @@ spec:
                         value: rabbitmq
                       - name: RABBITMQ_USER
                         value: myuser
+                      - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+                        value: "true"
+                      - name: EUREKA_INSTANCE_HOSTNAME
+                        value: demo-api
                   image: mingli99/demo-api:latest
                   name: demo-api
                   ports:

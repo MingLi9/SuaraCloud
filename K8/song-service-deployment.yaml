@@ -26,7 +26,11 @@ spec:
                         value: rabbitmq
                       - name: RABBITMQ_USER
                         value: myuser
-                  image: mingli99/song-service:latest
+                      - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
+                        value: "true"
+                      - name: EUREKA_INSTANCE_HOSTNAME
+                        value: song-service
+                  image: mingli99/songservice:latest
                   name: song-service
                   ports:
                       - containerPort: 9091
