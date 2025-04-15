@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    labels:
+        io.kompose.service: eureka
+    name: eureka
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            io.kompose.service: eureka
+    template:
+        metadata:
+            labels:
+                io.kompose.service: eureka
+        spec:
+            containers:
+                - image: mingli99/eureka:latest
+                  name: eureka
+                  ports:
+                      - containerPort: 8761
+                        protocol: TCP
+            restartPolicy: Always
