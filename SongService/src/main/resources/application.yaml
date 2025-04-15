@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: SongService
+    name: songservice
   rabbitmq:
     host: ${RABBITMQ_URL:rabbitmq}
     port: ${RABBITMQ_PORT:5672}

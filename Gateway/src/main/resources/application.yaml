@@ -3,16 +3,16 @@ server:
 
 spring:
   application:
-    name: Gateway
+    name: gateway
   cloud:
     gateway:
        routes:
         - id: demoservice
-          uri: lb://DEMOSERVICE
+          uri: lb://demoservice
           predicates:
             - Path=/demo/**
         - id: songservice
-          uri: lb://SONGSERVICE
+          uri: lb://songservice
           predicates:
             - Path=/songs/**
 
