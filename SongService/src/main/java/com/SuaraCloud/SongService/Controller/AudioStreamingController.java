@@ -24,6 +24,7 @@ public class AudioStreamingController {
 
         if (inputStream == null) {
             throw new IOException("File not found in resources folder: " + filename);
+            
         }
 
         // Set the response headers for streaming the audio file
