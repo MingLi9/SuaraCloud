@@ -189,5 +189,5 @@ jobs:
               run: |
                   kubectl apply -f ./K8/
                   for service in frontend gateway eureka songservice; do
-                      kubectl set image deployment/$service $service-container=${{ secrets.DOCKERHUB_USERNAME }}/$service:latest
+                      kubectl set image deployment/$service $service=${{ secrets.DOCKERHUB_USERNAME }}/$service:latest
                   done
