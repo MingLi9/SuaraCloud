@@ -188,6 +188,6 @@ jobs:
             - name: Deploy services to AKS
               run: |
                   for service in frontend gateway eureka songservice; do
-                      kubectl apply -f ./$service/deployment.yaml
+                      kubectl apply -f /K8
                       kubectl set image deployment/$service-deployment $service-container=${{ secrets.DOCKERHUB_USERNAME }}/$service:latest
                   done
