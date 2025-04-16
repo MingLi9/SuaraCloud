@@ -21,6 +21,6 @@ spec:
                   image: mingli99/frontend:latest
                   name: frontend
                   ports:
-                      - containerPort: 3000
+                      - containerPort: 80
                         protocol: TCP
             restartPolicy: Always
