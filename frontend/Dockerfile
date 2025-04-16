@@ -1,20 +1,12 @@
-# Use an official Node.js runtime as a parent image
-FROM node:22-alpine
-
-# Set the working directory
+# Build stage
+FROM node:22-alpine as builder
 WORKDIR /app
-
-# Copy package.json and package-lock.json first (for layer caching)
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application
 COPY . .
+ENV REACT_APP_GATEWAY_URL=http://gateway:8085
+RUN npm install
+RUN npm run build
 
-# Expose port 3000
-EXPOSE 3000
-
-# Start the React app in development mode
-CMD ["npm", "start"]
+# Serve with Nginx
+FROM nginx:alpine
+COPY --from=builder /app/build /usr/share/nginx/html
+EXPOSE 80
