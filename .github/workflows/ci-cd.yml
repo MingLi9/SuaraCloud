@@ -191,5 +191,5 @@ jobs:
                   kubectl set image deployment/frontend frontend=${{ secrets.DOCKERHUB_USERNAME }}/$frontend:latest
                   kubectl set image deployment/gateway gateway=${{ secrets.DOCKERHUB_USERNAME }}/$gateway:latest
                   kubectl set image deployment/eureka eureka=${{ secrets.DOCKERHUB_USERNAME }}/$eureka:latest
-                  kubectl set image deployment/songservice song-service=${{ secrets.DOCKERHUB_USERNAME }}/$songservice:latest
+                  kubectl set image deployment/song-service song-service=${{ secrets.DOCKERHUB_USERNAME }}/$songservice:latest
                   done
