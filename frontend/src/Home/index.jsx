@@ -3,7 +3,7 @@ import Sidebar from '../components/Sidebar';
 import MainContent from '../components/MainContent';
 import Player from '../components/Player';
 
-function Home() {
+function Home({ logout }) {
     const [currentSong, setCurrentSong] = useState({
         title: 'Blinding Lights',
         artist: 'The Weeknd',
@@ -15,7 +15,7 @@ function Home() {
         <div className='spotify-app'>
             <div className='spotify-main'>
                 <Sidebar />
-                <MainContent setCurrentSong={setCurrentSong} />
+                <MainContent setCurrentSong={setCurrentSong} logout={logout} />
             </div>
             <Player currentSong={currentSong} />
         </div>

@@ -3,10 +3,10 @@ import Header from './Header';
 import AlbumCard from './AlbumCard';
 import SongRow from './SongRow';
 
-const MainContent = ({ setCurrentSong }) => {
+const MainContent = ({ setCurrentSong, logout }) => {
     return (
         <div className='main-content'>
-            <Header />
+            <Header logout={logout} />
 
             {/* Recently Played */}
             <h2 className='section-title'>Recently Played</h2>
