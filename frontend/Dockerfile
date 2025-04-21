@@ -1,17 +1,16 @@
-# Use an official Node.js runtime as a parent image
-FROM node:22-alpine
-
-# Set the working directory
+# Build stage
+FROM node:22-alpine as builder
 WORKDIR /app
-
-# Copy package.json and package-lock.json
 COPY . .
-
-# Install dependencies
+ENV REACT_APP_GATEWAY_URL=/api
 RUN npm install
+RUN npm run build
 
-# Expose port 3000
-EXPOSE 3000
+# Serve with NGINX
+FROM nginx:alpine
+COPY --from=builder /app/build /usr/share/nginx/html
 
-# Run the app
-CMD ["npm", "start"]
+# Add custom nginx.conf for proxying /api to gateway
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
