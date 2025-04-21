@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import './Login.css';
@@ -13,6 +11,8 @@ function Login() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     async function handleLogin(e) {
         e.preventDefault();
@@ -113,18 +113,31 @@ function Login() {
                                     required
                                 />
                             </div>
-                            <div className='form-group'>
+                            <div className='form-group password-group'>
                                 <label htmlFor='password'>Password</label>
-                                <input
-                                    id='password'
-                                    type='password'
-                                    value={password}
-                                    onChange={(e) =>
-                                        setPassword(e.target.value)
-                                    }
-                                    placeholder='Password'
-                                    required
-                                />
+                                <div className='password-input-container'>
+                                    <input
+                                        id='password'
+                                        type={
+                                            showPassword ? 'text' : 'password'
+                                        }
+                                        value={password}
+                                        onChange={(e) =>
+                                            setPassword(e.target.value)
+                                        }
+                                        placeholder='Password'
+                                        required
+                                    />
+                                    <button
+                                        type='button'
+                                        className='password-toggle-btn'
+                                        onClick={() =>
+                                            setShowPassword(!showPassword)
+                                        }
+                                    >
+                                        {showPassword ? 'Hide' : 'Show'}
+                                    </button>
+                                </div>
                             </div>
                             <button
                                 type='submit'
@@ -171,35 +184,65 @@ function Login() {
                                     required
                                 />
                             </div>
-                            <div className='form-group'>
+                            <div className='form-group password-group'>
                                 <label htmlFor='register-password'>
                                     Password
                                 </label>
-                                <input
-                                    id='register-password'
-                                    type='password'
-                                    value={password}
-                                    onChange={(e) =>
-                                        setPassword(e.target.value)
-                                    }
-                                    placeholder='Create a password'
-                                    required
-                                />
+                                <div className='password-input-container'>
+                                    <input
+                                        id='register-password'
+                                        type={
+                                            showPassword ? 'text' : 'password'
+                                        }
+                                        value={password}
+                                        onChange={(e) =>
+                                            setPassword(e.target.value)
+                                        }
+                                        placeholder='Create a password'
+                                        required
+                                    />
+                                    <button
+                                        type='button'
+                                        className='password-toggle-btn'
+                                        onClick={() =>
+                                            setShowPassword(!showPassword)
+                                        }
+                                    >
+                                        {showPassword ? 'Hide' : 'Show'}
+                                    </button>
+                                </div>
                             </div>
-                            <div className='form-group'>
+                            <div className='form-group password-group'>
                                 <label htmlFor='confirm-password'>
                                     Confirm Password
                                 </label>
-                                <input
-                                    id='confirm-password'
-                                    type='password'
-                                    value={confirmPassword}
-                                    onChange={(e) =>
-                                        setConfirmPassword(e.target.value)
-                                    }
-                                    placeholder='Confirm your password'
-                                    required
-                                />
+                                <div className='password-input-container'>
+                                    <input
+                                        id='confirm-password'
+                                        type={
+                                            showConfirmPassword
+                                                ? 'text'
+                                                : 'password'
+                                        }
+                                        value={confirmPassword}
+                                        onChange={(e) =>
+                                            setConfirmPassword(e.target.value)
+                                        }
+                                        placeholder='Confirm your password'
+                                        required
+                                    />
+                                    <button
+                                        type='button'
+                                        className='password-toggle-btn'
+                                        onClick={() =>
+                                            setShowConfirmPassword(
+                                                !showConfirmPassword
+                                            )
+                                        }
+                                    >
+                                        {showConfirmPassword ? 'Hide' : 'Show'}
+                                    </button>
+                                </div>
                             </div>
                             <button
                                 type='submit'

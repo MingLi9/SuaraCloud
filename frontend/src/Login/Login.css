@@ -169,4 +169,34 @@
     text-align: center;
 }
 
-/* Add Spotify logo to Icons.jsx */
+.password-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-group input {
+    width: 100%;
+    padding-right: 70px;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: var(--royal-blue-400);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.2s;
+}
+
+.password-toggle-btn:hover {
+    color: var(--royal-blue-300);
+}
+
+.password-toggle-btn:focus {
+    outline: none;
+}
