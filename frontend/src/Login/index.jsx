@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import './Login.css';
-import { SpotifyLogo } from '../components/Icons';
+import { SpotifyLogo, DiscordLogo } from '../components/Icons';
 
 function Login() {
     const [mode, setMode] = useState('login'); // 'login', 'register', or 'reset'
@@ -13,6 +13,7 @@ function Login() {
     const [message, setMessage] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [oauthLoading, setOauthLoading] = useState(false);
 
     async function handleLogin(e) {
         e.preventDefault();
@@ -86,11 +87,31 @@ function Login() {
         }
     }
 
+    async function handleDiscordLogin() {
+        setError(null);
+        setOauthLoading(true);
+
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'discord',
+                options: {
+                    redirectTo: window.location.origin,
+                },
+            });
+
+            if (error) throw error;
+        } catch (error) {
+            setError(error.message || 'An error occurred during Discord login');
+            setOauthLoading(false);
+        }
+        // Note: We don't set oauthLoading to false here because the page will redirect
+    }
+
     return (
         <div className='login-container'>
             <div className='login-header'>
                 <SpotifyLogo className='spotify-logo' />
-                <h1>Music App</h1>
+                <h1>Suara Cloud</h1>
             </div>
 
             <div className='login-card'>
@@ -147,6 +168,26 @@ function Login() {
                                 {loading ? 'Logging in...' : 'LOG IN'}
                             </button>
                         </form>
+                        <div className='social-login'>
+                            <div className='divider'>
+                                <span>OR</span>
+                            </div>
+                            <button
+                                type='button'
+                                className='discord-button'
+                                onClick={handleDiscordLogin}
+                                disabled={oauthLoading}
+                            >
+                                <div className='discord-icon'>
+                                    <DiscordLogo className='discord-logo' />
+                                </div>
+                                <span>
+                                    {oauthLoading
+                                        ? 'Connecting...'
+                                        : 'Continue with Discord'}
+                                </span>
+                            </button>
+                        </div>
                         <div className='login-footer'>
                             <button
                                 className='text-button'
@@ -252,6 +293,27 @@ function Login() {
                                 {loading ? 'Signing up...' : 'SIGN UP'}
                             </button>
                         </form>
+
+                        <div className='social-login'>
+                            <div className='divider'>
+                                <span>OR</span>
+                            </div>
+                            <button
+                                type='button'
+                                className='discord-button'
+                                onClick={handleDiscordLogin}
+                                disabled={oauthLoading}
+                            >
+                                <div className='discord-icon'>
+                                    <DiscordLogo className='discord-logo' />
+                                </div>
+                                <span>
+                                    {oauthLoading
+                                        ? 'Connecting...'
+                                        : 'Sign up with Discord'}
+                                </span>
+                            </button>
+                        </div>
                         <div className='login-footer'>
                             <div className='register-prompt'>
                                 <span>Already have an account?</span>
