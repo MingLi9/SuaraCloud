@@ -27,6 +27,8 @@ module.exports = {
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
     moduleNameMapper: {
         '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
+        '^../supabaseClient$': '<rootDir>/__mocks__/supabaseClient.js',
+        '^../supabaseClient/index$': '<rootDir>/__mocks__/supabaseClient.js',
     },
     testPathIgnorePatterns: ['<rootDir>/E2E/.*'],
 };

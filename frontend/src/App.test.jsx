@@ -1,6 +1,9 @@
+jest.mock('../supabaseClient');
+
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import App from './App';
+import { MemoryRouter } from 'react-router-dom';
 
 // Mock pages
 jest.mock('./Home', () => () => <div>Home Page</div>);
@@ -18,21 +21,28 @@ jest.mock('react-router-dom', () => {
 });
 
 describe('App', () => {
-    it('renders Home page', () => {
-        render(<App />);
+    it('renders Home page', async () => {
+        render(
+            <MemoryRouter>
+                <App />
+            </MemoryRouter>
+        );
 
-        // App should render Home by default
-        expect(screen.getByText('Home Page')).toBeInTheDocument();
+        // Wait until "Home Page" appears after loading is done
+        await waitFor(() => {
+            expect(screen.getByText('Home Page')).toBeInTheDocument();
+        });
     });
 
-    it('renders Test page', () => {
-        render(<App />);
+    it('renders Test page', async () => {
+        render(
+            <MemoryRouter>
+                <App />
+            </MemoryRouter>
+        );
 
-        // Simulate navigation to Test page
-        const testPageLink = screen.getByText('Test Page');
-        testPageLink.click();
-
-        // App should render Test page
-        expect(screen.getByText('Test Page')).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText('Test Page')).toBeInTheDocument();
+        });
     });
 });

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import './Login.css';
 import { SpotifyLogo, DiscordLogo } from '../components/Icons';
