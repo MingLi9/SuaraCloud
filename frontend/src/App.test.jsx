@@ -21,7 +21,7 @@ jest.mock('react-router-dom', () => {
 });
 
 beforeEach(() => {
-    jest.clearAllMocks(); // Clear mocks before each test
+    jest.clearAllMocks();
 });
 
 describe('App', () => {

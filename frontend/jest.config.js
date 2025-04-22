@@ -22,6 +22,7 @@ module.exports = {
         '!**/E2E/**',
         '!src/TestPage/**',
         '!src/components/Icons.jsx',
+        '!src/supabaseClient/**',
     ],
     testEnvironment: 'jsdom',
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],

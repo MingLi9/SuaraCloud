@@ -151,6 +151,7 @@ function Login() {
                                     />
                                     <button
                                         type='button'
+                                        data-testid='toggle-password-visibility'
                                         className='password-toggle-btn'
                                         onClick={() =>
                                             setShowPassword(!showPassword)
@@ -162,6 +163,7 @@ function Login() {
                             </div>
                             <button
                                 type='submit'
+                                data-testid='login-submit'
                                 className='login-button'
                                 disabled={loading}
                             >
@@ -174,6 +176,7 @@ function Login() {
                             </div>
                             <button
                                 type='button'
+                                data-testid='discord-login'
                                 className='discord-button'
                                 onClick={handleDiscordLogin}
                                 disabled={oauthLoading}
@@ -190,6 +193,7 @@ function Login() {
                         </div>
                         <div className='login-footer'>
                             <button
+                                data-testid='switch-to-reset'
                                 className='text-button'
                                 onClick={() => setMode('reset')}
                             >
@@ -198,6 +202,7 @@ function Login() {
                             <div className='register-prompt'>
                                 <span>Don't have an account?</span>
                                 <button
+                                    data-testid='switch-to-register'
                                     className='text-button'
                                     onClick={() => setMode('register')}
                                 >
@@ -244,6 +249,7 @@ function Login() {
                                     />
                                     <button
                                         type='button'
+                                        data-testid='toggle-password-visibility'
                                         className='password-toggle-btn'
                                         onClick={() =>
                                             setShowPassword(!showPassword)
@@ -274,6 +280,7 @@ function Login() {
                                     />
                                     <button
                                         type='button'
+                                        data-testid='toggle-confirm-password-visibility'
                                         className='password-toggle-btn'
                                         onClick={() =>
                                             setShowConfirmPassword(
@@ -287,6 +294,7 @@ function Login() {
                             </div>
                             <button
                                 type='submit'
+                                data-testid='sign-up-submit'
                                 className='login-button'
                                 disabled={loading}
                             >
@@ -300,6 +308,7 @@ function Login() {
                             </div>
                             <button
                                 type='button'
+                                data-testid='discord-sign-up'
                                 className='discord-button'
                                 onClick={handleDiscordLogin}
                                 disabled={oauthLoading}
@@ -330,8 +339,13 @@ function Login() {
 
                 {mode === 'reset' && (
                     <>
-                        <h2>Reset your password</h2>
-                        <p className='reset-description'>
+                        <h2 data-testid='reset-password-title'>
+                            Reset your password
+                        </h2>
+                        <p
+                            data-testid='reset-password-description'
+                            className='reset-description'
+                        >
                             We'll send you an email with a link to reset your
                             password.
                         </p>
@@ -354,6 +368,7 @@ function Login() {
                             </div>
                             <button
                                 type='submit'
+                                data-testid='reset-submit'
                                 className='login-button'
                                 disabled={loading}
                             >
