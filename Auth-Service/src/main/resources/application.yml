@@ -1,0 +1,22 @@
+server:
+    port: 8086
+
+spring:
+    application:
+        name: authservice
+    rabbitmq:
+        host: ${RABBITMQ_URL:rabbitmq}
+        port: ${RABBITMQ_PORT:5672}
+        username: ${RABBITMQ_USER:myuser}
+        password: ${RABBITMQ_PW:secret}
+        virtual-host: /
+
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+
+supabase:
+    jwt:
+#        secret: ${SUPABASE_JWT_SECRET}
+        secret: "JJ5KcwkeMPtdCIqTytKoM5GqgY/2gtXSTS7coCKH9uteTp6sWel6UyRb8g+iFxh1nlYJJ+AS3CSu4eitpXn/+g=="

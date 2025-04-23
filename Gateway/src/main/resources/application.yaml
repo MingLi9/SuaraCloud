@@ -6,11 +6,14 @@ spring:
     name: gateway
   cloud:
     gateway:
-       routes:
+      routes:
         - id: demoservice
           uri: lb://demoservice
           predicates:
             - Path=/demo/**
+          filters:
+            - StripPrefix=1
+            - PreserveHostHeader
         - id: songservice
           uri: lb://songservice
           predicates:
