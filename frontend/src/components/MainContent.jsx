@@ -3,7 +3,7 @@ import Header from './Header';
 import AlbumCard from './AlbumCard';
 import SongRow from './SongRow';
 
-const MainContent = ({ setCurrentSong, logout }) => {
+const MainContent = ({ songs, playSong, setCurrentSong, logout }) => {
     return (
         <div className='main-content'>
             <Header logout={logout} />
@@ -11,12 +11,14 @@ const MainContent = ({ setCurrentSong, logout }) => {
             {/* Recently Played */}
             <h2 className='section-title'>Recently Played</h2>
             <div className='album-grid'>
-                {Array.from({ length: 5 }).map((_, i) => (
+                {songs.map((song, i) => (
                     <AlbumCard
                         key={i}
-                        title={`Album ${i + 1}`}
-                        subtitle={`Artist ${i + 1}`}
+                        title='title'
+                        subtitle='subtitle'
                         index={i + 1}
+                        song={song}
+                        playSong={playSong}
                     />
                 ))}
             </div>

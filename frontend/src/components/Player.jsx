@@ -14,10 +14,18 @@ const Player = ({ currentSong }) => {
     return (
         <div className='player'>
             <div className='player-left'>
-                <div className='current-song-cover'>{currentSong.title[0]}</div>
+                <div className='current-song-cover'>
+                    {/* {currentSong.title[0]} */}
+                </div>
                 <div className='current-song-info'>
-                    <p className='current-song-title'>{currentSong.title}</p>
-                    <p className='current-song-artist'>{currentSong.artist}</p>
+                    <p className='current-song-title'>
+                        {/* {currentSong.title} */}
+                        Witte chocolade vlokken
+                    </p>
+                    <p className='current-song-artist'>
+                        {/* {currentSong.artist} */}
+                        Piet
+                    </p>
                 </div>
                 <button className='like-button'>
                     <HeartIcon className='icon-sm' />
@@ -49,7 +57,8 @@ const Player = ({ currentSong }) => {
                         <div className='progress-fill'></div>
                     </div>
                     <span className='progress-time'>
-                        {currentSong.duration}
+                        {/* {currentSong.duration} */}
+                        3:45
                     </span>
                 </div>
             </div>

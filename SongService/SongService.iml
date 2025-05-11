@@ -102,12 +102,49 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.codehaus.jettison:jettison:1.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter-loadbalancer:4.2.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-loadbalancer:4.2.1" level="project" />
-    <orderEntry type="library" name="Maven: io.projectreactor:reactor-core:3.7.4" level="project" />
-    <orderEntry type="library" name="Maven: org.reactivestreams:reactive-streams:1.0.4" level="project" />
     <orderEntry type="library" name="Maven: io.projectreactor.addons:reactor-extra:3.5.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-cache:3.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context-support:6.2.5" level="project" />
     <orderEntry type="library" name="Maven: com.stoyanr:evictor:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.azure:azure-storage-blob:12.22.0" level="project" />
+    <orderEntry type="library" name="Maven: com.azure:azure-core:1.38.0" level="project" />
+    <orderEntry type="library" name="Maven: com.azure:azure-json:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: io.projectreactor:reactor-core:3.7.4" level="project" />
+    <orderEntry type="library" name="Maven: org.reactivestreams:reactive-streams:1.0.4" level="project" />
+    <orderEntry type="library" name="Maven: com.azure:azure-core-http-netty:1.13.2" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-handler:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-common:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-resolver:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-handler-proxy:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-socks:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-buffer:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-http:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-http2:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-native-unix-common:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-native-epoll:linux-x86_64:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-classes-epoll:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-native-kqueue:osx-x86_64:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-classes-kqueue:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-tcnative-boringssl-static:2.0.70.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-tcnative-classes:2.0.70.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-tcnative-boringssl-static:linux-x86_64:2.0.70.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-tcnative-boringssl-static:linux-aarch_64:2.0.70.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-tcnative-boringssl-static:osx-x86_64:2.0.70.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-tcnative-boringssl-static:osx-aarch_64:2.0.70.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-tcnative-boringssl-static:windows-x86_64:2.0.70.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.projectreactor.netty:reactor-netty-http:1.2.4" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-resolver-dns:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec-dns:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-resolver-dns-native-macos:osx-x86_64:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-resolver-dns-classes-macos:4.1.119.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.projectreactor.netty:reactor-netty-core:1.2.4" level="project" />
+    <orderEntry type="library" name="Maven: com.azure:azure-storage-common:12.21.0" level="project" />
+    <orderEntry type="library" name="Maven: com.azure:azure-storage-internal-avro:12.7.0" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.3" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.woodstox:stax2-api:4.2.2" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.woodstox:woodstox-core:7.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-starter-test:3.4.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test:3.4.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.springframework.boot:spring-boot-test-autoconfigure:3.4.4" level="project" />

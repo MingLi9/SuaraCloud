@@ -83,7 +83,7 @@ services:
     auth-service:
         image: mingli99/authservice:latest
         ports:
-            - '9092:9092'
+            - '8086:8086'
         networks:
             - suara-cloud
         environment:
@@ -96,7 +96,6 @@ services:
         restart: always
         depends_on:
             - eureka
-            - rabbitmq
 networks:
     suara-cloud:
         driver: bridge

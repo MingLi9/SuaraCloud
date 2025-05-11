@@ -10,10 +10,7 @@ spring:
         - id: demoservice
           uri: lb://demoservice
           predicates:
-            - Path=/demo/**
-          filters:
-            - StripPrefix=1
-            - PreserveHostHeader
+            - Path=/demo/**, /api/**
         - id: songservice
           uri: lb://songservice
           predicates:

@@ -10,8 +10,16 @@ spring:
     username: ${RABBITMQ_USER:myuser}
     password: ${RABBITMQ_PW:secret}
     virtual-host: /
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+
+azure:
+  storage:
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
