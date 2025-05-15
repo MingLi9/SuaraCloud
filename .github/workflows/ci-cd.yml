@@ -142,9 +142,7 @@ jobs:
         with:
             directory: ./SongService
             SONAR_PROJECT_KEY: SuaraCloud_songservice
-        secrets:
-            AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        secrets: inherit
 
     SongMetaService:
         needs: DetectChanges
@@ -171,11 +169,7 @@ jobs:
         with:
             directory: ./UserService
             SONAR_PROJECT_KEY: SuaraCloud_userservice
-        secrets:
-            DATABASE_URL: ${{ secrets.USER_DATABASE_URL }}
-            DATABASE_USERNAME: ${{ secrets.USER_DATABASE_USERNAME }}
-            DATABASE_PASSWORD: ${{ secrets.USER_DATABASE_PASSWORD }}
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        secrets: inherit
 
     LoggingService:
         needs: DetectChanges
