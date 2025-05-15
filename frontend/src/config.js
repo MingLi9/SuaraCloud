@@ -2,6 +2,7 @@ const gatewayUrl = process.env.REACT_APP_GATEWAY_URL;
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseKey = process.env.REACT_APP_SUPABASE_KEY;
 const bearerString = localStorage.getItem('sb-hxuegtmworlasjwdqsya-auth-token');
+console.log('REACT_APP_GATEWAY_URL', gatewayUrl);
 console.log('supa base url', supabaseUrl);
 console.log('supa base key', supabaseKey);
 let accessToken = '';
