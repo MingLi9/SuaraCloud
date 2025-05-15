@@ -24,6 +24,14 @@ module.exports = {
         '!src/components/Icons.jsx',
         '!src/supabaseClient/**',
     ],
+    coverageThreshold: {
+        global: {
+            branches: 0,
+            functions: 0,
+            lines: 0,
+            statements: 0,
+        },
+    },
     testEnvironment: 'jsdom',
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
     moduleNameMapper: {
