@@ -220,7 +220,15 @@ jobs:
                   for service in $(echo $services | jq -r '.[]'); do
                       lowercase_service="$(echo "$service" | tr '[:upper:]' '[:lower:]')"
                       image_name="${{ secrets.DOCKERHUB_USERNAME }}/$lowercase_service:latest"
-                      docker build -t "$image_name" "$service"
+                      if [ "$service" = "frontend" ]; then
+                        docker build \
+                          --build-arg REACT_APP_GATEWAY_URL=${{ secrets.REACT_APP_GATEWAY_URL }} \
+                          --build-arg REACT_APP_SUPABASE_URL=${{ secrets.REACT_APP_SUPABASE_URL }} \
+                          --build-arg REACT_APP_SUPABASE_KEY=${{ secrets.REACT_APP_SUPABASE_KEY }} \
+                          -t "$image_name" "$service"
+                      else
+                        docker build -t "$image_name" "$service"
+                      fi
                       docker push "$image_name"
                   done
 
