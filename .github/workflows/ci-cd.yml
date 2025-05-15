@@ -10,45 +10,45 @@ on:
             - dev
 
 jobs:
-    # build-and-test:
-    #     runs-on: ubuntu-latest
+    build-and-test:
+        runs-on: ubuntu-latest
 
-    #     strategy:
-    #         matrix:
-    #             folder: [frontend, gateway, eureka, songservice]
+        strategy:
+            matrix:
+                folder: [frontend]
 
-    #     env:
-    #         REACT_APP_GATEWAY_URL: ${{ secrets.REACT_APP_GATEWAY_URL }}
+        env:
+            REACT_APP_GATEWAY_URL: ${{ secrets.REACT_APP_GATEWAY_URL }}
 
-    #     steps:
-    #         - name: Checkout code
-    #           uses: actions/checkout@v3
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
 
-    #         - name: Set up Node.js for frontend
-    #           if: matrix.folder == 'frontend'
-    #           uses: actions/setup-node@v3
-    #           with:
-    #               node-version: 16
+            - name: Set up Node.js for frontend
+              if: matrix.folder == 'frontend'
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
 
-    #         - name: Navigate to folder and install dependencies
-    #           run: |
-    #               cd ${{ matrix.folder }}
-    #               npm install
-    #           if: matrix.folder == 'frontend'
+            - name: Navigate to folder and install dependencies
+              run: |
+                  cd ${{ matrix.folder }}
+                  npm install
+              if: matrix.folder == 'frontend'
 
-    #         - name: Run Jest tests with coverage
-    #           run: |
-    #               cd ${{ matrix.folder }}
-    #               npm test -- --coverage
-    #           if: matrix.folder == 'frontend'
+            - name: Run Jest tests with coverage
+              run: |
+                  cd ${{ matrix.folder }}
+                  npm test -- --coverage
+              if: matrix.folder == 'frontend'
 
-    #         - name: Upload Jest Coverage Artifact
-    #           uses: actions/upload-artifact@v4
-    #           with:
-    #               name: jest-coverage
-    #               path: frontend/coverage/lcov.info
-    #               retention-days: 1
-    #           if: matrix.folder == 'frontend'
+            - name: Upload Jest Coverage Artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: jest-coverage
+                  path: frontend/coverage/lcov.info
+                  retention-days: 1
+              if: matrix.folder == 'frontend'
 
     DetectChanges:
         runs-on: ubuntu-latest
@@ -104,12 +104,7 @@ jobs:
 
             - name: Install dependencies
               working-directory: ./frontend
-              run: ls -la
-              # run: npm install
-
-            - name: Build
-              working-directory: ./frontend
-              run: npm run build
+              run: npm install
 
             - name: Run Jest tests with coverage
               working-directory: ./frontend
