@@ -19,6 +19,18 @@ spring:
           uri: lb://userservice
           predicates:
             - Path=/users/**
+        - id: songmetaservice
+          uri: lb://songmetaservice
+          predicates:
+            - Path=/songmetaservice/**
+        - id: authservice
+          uri: lb://authservice
+          predicates:
+            - Path=/auth/**
+        - id: loggingservice
+          uri: lb://loggingservice
+          predicates:
+            - Path=/logging/**
 
 eureka:
   client:
