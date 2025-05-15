@@ -175,6 +175,7 @@ jobs:
             DATABASE_URL: ${{ secrets.USER_DATABASE_URL }}
             DATABASE_USERNAME: ${{ secrets.USER_DATABASE_USERNAME }}
             DATABASE_PASSWORD: ${{ secrets.USER_DATABASE_PASSWORD }}
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     LoggingService:
         needs: DetectChanges
