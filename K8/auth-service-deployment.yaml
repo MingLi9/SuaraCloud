@@ -45,6 +45,11 @@ spec:
                             secretKeyRef:
                                 name: auth-service-secrets
                                 key: DATABASE_PASSWORD
+                      - name: JWT_SECRET
+                        valueFrom:
+                            secretKeyRef:
+                                name: auth-service-secrets
+                                key: JWT_SECRET
                   image: mingli99/userservice:latest
                   name: user-service
                   ports:
