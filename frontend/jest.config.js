@@ -22,11 +22,22 @@ module.exports = {
         '!**/E2E/**',
         '!src/TestPage/**',
         '!src/components/Icons.jsx',
+        '!src/supabaseClient/**',
     ],
+    coverageThreshold: {
+        global: {
+            branches: 0,
+            functions: 0,
+            lines: 0,
+            statements: 0,
+        },
+    },
     testEnvironment: 'jsdom',
     setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
     moduleNameMapper: {
         '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
+        '^../supabaseClient$': '<rootDir>/__mocks__/supabaseClient.js',
+        '^../supabaseClient/index$': '<rootDir>/__mocks__/supabaseClient.js',
     },
     testPathIgnorePatterns: ['<rootDir>/E2E/.*'],
 };
