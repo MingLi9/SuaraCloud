@@ -2,17 +2,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
     labels:
-        io.kompose.service: user-service
-    name: user-service
+        io.kompose.service: auth-service
+    name: auth-service
 spec:
     replicas: 1
     selector:
         matchLabels:
-            io.kompose.service: user-service
+            io.kompose.service: auth-service
     template:
         metadata:
             labels:
-                io.kompose.service: user-service
+                io.kompose.service: auth-service
         spec:
             containers:
                 - env:
@@ -50,8 +50,8 @@ spec:
                             secretKeyRef:
                                 name: auth-service-secrets
                                 key: JWT_SECRET
-                  image: mingli99/userservice:latest
-                  name: user-service
+                  image: mingli99/authservice:latest
+                  name: auth-service
                   ports:
                       - containerPort: 8087
                         protocol: TCP
