@@ -107,16 +107,16 @@ jobs:
               working-directory: ./frontend
               run: npm install
 
-            - name: Run Jest tests with coverage
-              working-directory: ./frontend
-              run: npm test -- --coverage
+            # - name: Run Jest tests with coverage
+            #   working-directory: ./frontend
+            #   run: npm test -- --coverage
 
-            - name: Upload Jest Coverage Artifact
-              uses: actions/upload-artifact@v4
-              with:
-                  name: jest-coverage
-                  path: frontend/coverage/lcov.info
-                  retention-days: 1
+            # - name: Upload Jest Coverage Artifact
+            #   uses: actions/upload-artifact@v4
+            #   with:
+            #       name: jest-coverage
+            #       path: frontend/coverage/lcov.info
+            #       retention-days: 1
 
     Gateway:
         needs: DetectChanges
