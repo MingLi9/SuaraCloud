@@ -1,4 +1,4 @@
-const gatewayUrl = process.env.REACT_APP_GATEWAY_URL;
+const gatewayUrl = `${window.location.protocol}//${window.location.hostname}/gateway`;
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
 const supabaseKey = process.env.REACT_APP_SUPABASE_KEY;
 const bearerString = localStorage.getItem('sb-hxuegtmworlasjwdqsya-auth-token');

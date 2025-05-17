@@ -15,3 +15,5 @@
 */yarn-debug.log*
 */.gitignore
 *.idea
+*K8/*secret.yaml
+*K8/*secret.yml

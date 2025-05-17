@@ -17,19 +17,42 @@ spec:
             containers:
                 - env:
                       - name: EUREKA_URL
-                        value: http://eureka:8761/eureka/
+                        valueFrom:
+                            configMapKeyRef:
+                                name: song-service-config
+                                key: EUREKA_URL
                       - name: RABBITMQ_PORT
-                        value: "5672"
+                        valueFrom:
+                            configMapKeyRef:
+                                name: song-service-config
+                                key: RABBITMQ_PORT
                       - name: RABBITMQ_PW
-                        value: secret
+                        valueFrom:
+                            secretKeyRef:
+                                name: song-service-secrets
+                                key: RABBITMQ_PW
                       - name: RABBITMQ_URL
-                        value: rabbitmq
+                        valueFrom:
+                            configMapKeyRef:
+                                name: song-service-config
+                                key: RABBITMQ_URL
                       - name: RABBITMQ_USER
-                        value: myuser
+                        valueFrom:
+                            secretKeyRef:
+                                name: song-service-secrets
+                                key: RABBITMQ_USER
                       - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
-                        value: "true"
+                        value: 'true'
                       - name: EUREKA_INSTANCE_HOSTNAME
-                        value: song-service
+                        valueFrom:
+                            configMapKeyRef:
+                                name: song-service-config
+                                key: EUREKA_INSTANCE_HOSTNAME
+                      - name: AZURE_STORAGE_CONNECTION_STRING
+                        valueFrom:
+                            secretKeyRef:
+                                name: song-service-secrets
+                                key: AZURE_STORAGE_CONNECTION_STRING
                   image: mingli99/songservice:latest
                   name: song-service
                   ports:
