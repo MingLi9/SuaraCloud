@@ -1,6 +1,6 @@
 package com.SuaraCloud.SongService.Controller;
 
-import com.SuaraCloud.SongService.BlobStorageService;
+import com.SuaraCloud.SongService.Service.BlobStorageService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;

@@ -2,11 +2,9 @@ services:
     frontend:
         image: mingli99/frontend:latest
         ports:
-            - '3000:3000'
+            - '80:80'
         networks:
             - suara-cloud
-        environment:
-            REACT_APP_GATEWAY_URL: 'http://localhost:8085'
         restart: always
         depends_on:
             - gateway
@@ -80,6 +78,22 @@ services:
             - eureka
             - rabbitmq
 
+    song-meta-service:
+        image: mingli99/songmetaservice:latest
+        ports:
+            - '9092:9092'
+        networks:
+            - suara-cloud
+        environment:
+            - RABBITMQ_URL=rabbitmq
+            - RABBITMQ_PORT=5672
+            - RABBITMQ_USER=myuser
+            - RABBITMQ_PW=secret
+            - EUREKA_URL=http://eureka:8761/eureka/
+        restart: always
+        depends_on:
+            - eureka
+
     auth-service:
         image: mingli99/authservice:latest
         ports:
@@ -96,6 +110,41 @@ services:
         restart: always
         depends_on:
             - eureka
+
+    user-service:
+        image: mingli99/userservice:latest
+        ports:
+            - '8087:8087'
+        networks:
+            - suara-cloud
+        environment:
+            - RABBITMQ_URL=rabbitmq
+            - RABBITMQ_PORT=5672
+            - RABBITMQ_USER=myuser
+            - RABBITMQ_PW=secret
+            - EUREKA_URL=http://eureka:8761/eureka/
+            - DATABASE_USERNAME=neondb_owner
+            - DATABASE_PASSWORD=npg_xeRz6bYNUo0G
+        restart: always
+        depends_on:
+            - eureka
+
+    logging-service:
+        image: mingli99/loggingservice:latest
+        ports:
+            - '8088:8088'
+        networks:
+            - suara-cloud
+        environment:
+            - RABBITMQ_URL=rabbitmq
+            - RABBITMQ_PORT=5672
+            - RABBITMQ_USER=myuser
+            - RABBITMQ_PW=secret
+            - EUREKA_URL=http://eureka:8761/eureka/
+        restart: always
+        depends_on:
+            - eureka
+
 networks:
     suara-cloud:
         driver: bridge

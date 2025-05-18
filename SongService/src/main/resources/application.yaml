@@ -5,7 +5,7 @@ spring:
   application:
     name: songservice
   rabbitmq:
-    host: ${RABBITMQ_URL:rabbitmq}
+    host: ${RABBITMQ_URL:localhost}
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USER:myuser}
     password: ${RABBITMQ_PW:secret}
