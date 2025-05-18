@@ -1,4 +1,4 @@
-package com.SuaraCloud.SongService;
+package com.SuaraCloud.SongService.Service;
 
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.storage.blob.BlobClient;

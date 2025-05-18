@@ -48,6 +48,11 @@
 			<artifactId>azure-storage-blob</artifactId>
 			<version>12.22.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 
 		<dependency>
