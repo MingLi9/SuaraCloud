@@ -144,6 +144,7 @@ services:
         restart: always
         depends_on:
             - eureka
+
 networks:
     suara-cloud:
         driver: bridge
