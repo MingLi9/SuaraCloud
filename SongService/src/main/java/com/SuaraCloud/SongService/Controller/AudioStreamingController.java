@@ -1,6 +1,7 @@
 package com.SuaraCloud.SongService.Controller;
 
 import com.SuaraCloud.SongService.Service.BlobStorageService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -22,8 +22,11 @@ public class AudioStreamingController {
     @Autowired
     private BlobStorageService blobStorageService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    @PostMapping(value = "/upload/{title}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadFile(
+            @RequestPart("file") MultipartFile file,
+            @PathVariable("title") String title,
+            HttpServletRequest request) {
         try {
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body("Please upload a file");
@@ -34,8 +37,11 @@ public class AudioStreamingController {
                 return ResponseEntity.badRequest().body("Only MP3 files are supported");
             }
 
+            String userIdString = (String) request.getAttribute("userId");
+            Long artistId = Long.parseLong(userIdString);
+
             // Upload file to Azure Blob Storage
-            String blobUrl = blobStorageService.uploadFile(file);
+            String blobUrl = blobStorageService.uploadFile(file, title, artistId);
             return ResponseEntity.ok("File uploaded successfully: " + blobUrl);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

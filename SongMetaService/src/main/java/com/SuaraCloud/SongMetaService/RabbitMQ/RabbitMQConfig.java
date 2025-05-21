@@ -1,4 +1,4 @@
-package com.SuaraCloud.SongService.RabbitMQ;
+package com.SuaraCloud.SongMetaService.RabbitMQ;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -33,7 +33,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue songMetaQueue() {
-        return new Queue("song-queue", true);
+        return new Queue("songmeta-queue", true);
     }
 
     @Bean
