@@ -22,7 +22,7 @@ spring:
         - id: songmetaservice
           uri: lb://songmetaservice
           predicates:
-            - Path=/songmetaservice/**
+            - Path=/songmeta/**
         - id: authservice
           uri: lb://authservice
           predicates:

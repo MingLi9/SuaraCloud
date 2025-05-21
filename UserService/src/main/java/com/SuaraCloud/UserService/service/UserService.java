@@ -1,5 +1,7 @@
 package com.SuaraCloud.UserService.service;
 
+import com.SuaraCloud.UserService.RabbitMQ.Payload;
+import com.SuaraCloud.UserService.RabbitMQ.RabbitMQEvent;
 import com.SuaraCloud.UserService.exception.NotDataOwnerException;
 import com.SuaraCloud.UserService.model.User;
 import com.SuaraCloud.UserService.repository.UserRepository;
@@ -7,11 +9,12 @@ import com.SuaraCloud.UserService.dto.UserDto;
 import com.SuaraCloud.UserService.dto.UserRequest;
 import com.SuaraCloud.UserService.exception.ResourceNotFoundException;
 import com.SuaraCloud.UserService.exception.UserAlreadyExistsException;
-import jakarta.ws.rs.NotAuthorizedException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,10 +22,12 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RabbitTemplate rabbitTemplate;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RabbitTemplate rabbitTemplate) {
         this.userRepository = userRepository;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public List<UserDto> getAllUsers() {
@@ -44,7 +49,7 @@ public class UserService {
 
     public UserDto getUserByTokenId(String tokenid) {
         if (!userRepository.existsByTokenId(tokenid)) {
-            throw new ResourceNotFoundException("Token id was not found: " + tokenid);
+            return createUser(tokenid);
         }
 
         User user = userRepository.findUserByTokenId(tokenid);
@@ -61,6 +66,9 @@ public class UserService {
         user.setTokenId(tokenId);
 
         User savedUser = userRepository.save(user);
+
+        sendMQTTMessage(savedUser.getId(), "create_user");
+
         return convertToDto(savedUser);
     }
 
@@ -78,6 +86,7 @@ public class UserService {
         user.setEmail(userRequest.getEmail());
 
         User updatedUser = userRepository.save(user);
+        sendMQTTMessage(id, "update_user");
         return convertToDto(updatedUser);
     }
 
@@ -90,6 +99,7 @@ public class UserService {
             throw new NotDataOwnerException("Only the user can CRUD their own account");
         }
         userRepository.deleteById(id);
+        sendMQTTMessage(id, "delete_user");
     }
 
     private UserDto convertToDto(User user) {
@@ -100,5 +110,10 @@ public class UserService {
         userDto.setLastName(user.getLastName());
         userDto.setEmail(user.getEmail());
         return userDto;
+    }
+
+    private void sendMQTTMessage(Long id, String eventName) {
+        RabbitMQEvent payload = new RabbitMQEvent<>(eventName, new Payload(id), "UserService", ZonedDateTime.now());
+        rabbitTemplate.convertAndSend("suara-broadcast-exchange", "", payload);
     }
 }

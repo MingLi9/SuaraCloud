@@ -1,4 +1,4 @@
-package com.SuaraCloud.SongService.RabbitMQ;
+package com.SuaraCloud.UserService.RabbitMQ;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -32,13 +32,13 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue songMetaQueue() {
-        return new Queue("song-queue", true);
+    public Queue loggingQueue() {
+        return new Queue("user-queue", true);
     }
 
     @Bean
-    public Binding songMetaBinding(FanoutExchange fanoutExchange, Queue songMetaQueue) {
-        return BindingBuilder.bind(songMetaQueue).to(fanoutExchange);
+    public Binding loggingBinding(FanoutExchange fanoutExchange, Queue loggingQueue) {
+        return BindingBuilder.bind(loggingQueue).to(fanoutExchange);
     }
 
     @Bean

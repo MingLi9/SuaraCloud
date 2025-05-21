@@ -18,12 +18,9 @@ public class JwtValidationService {
         try {
             // Print the current time for debugging
             Date now = new Date();
-            System.out.println("Current time: " + now);
 
             // Decode without verification first to inspect the token
             DecodedJWT unverified = JWT.decode(token);
-            System.out.println("Token exp claim: " + unverified.getExpiresAt());
-            System.out.println("Token iat claim: " + unverified.getIssuedAt());
 
             // Create the algorithm with the correct secret
             Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
@@ -36,7 +33,6 @@ public class JwtValidationService {
                     .build();
 
             DecodedJWT verified = verifier.verify(token);
-            System.out.println("Token verified successfully!");
             return verified;
         } catch (JWTVerificationException exception) {
             System.out.println("JWT Verification failed: " + exception.getMessage());
