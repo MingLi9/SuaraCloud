@@ -52,8 +52,6 @@ jobs:
         if: needs.DetectChanges.outputs.frontend == 'true'
         runs-on: ubuntu-latest
         continue-on-error: true
-        env:
-            REACT_APP_GATEWAY_URL: ${{ secrets.REACT_APP_GATEWAY_URL }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
