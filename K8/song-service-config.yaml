@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: song-service-config
+data:
+    EUREKA_URL: http://eureka:8761/eureka/
+    EUREKA_INSTANCE_HOSTNAME: song-service
+    RABBITMQ_PORT: '5672'
+    RABBITMQ_URL: rabbitmq

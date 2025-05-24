@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from './Icons';
 
-const Header = () => {
+const Header = ({ logout }) => {
     return (
         <div className='header'>
             <div className='header-nav'>
@@ -13,6 +13,9 @@ const Header = () => {
                 </button>
             </div>
             <div className='header-user'>
+                <button className='upgrade-button' onClick={logout}>
+                    Logout
+                </button>
                 <button className='upgrade-button'>Upgrade</button>
                 <div className='user-avatar'>U</div>
             </div>
