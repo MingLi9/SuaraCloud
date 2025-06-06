@@ -33,4 +33,11 @@ spec:
                         protocol: TCP
                       - containerPort: 1883
                         protocol: TCP
+                  resources:
+                      requests:
+                          cpu: '250m'
+                          memory: '250Mi'
+                      limits:
+                          cpu: '500m'
+                          memory: '500Mi'
             restartPolicy: Always
