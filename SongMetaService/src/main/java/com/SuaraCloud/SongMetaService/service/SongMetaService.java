@@ -53,9 +53,17 @@ public class SongMetaService {
                 .collect(Collectors.toList());
     }
 
+    public SongMetaDto getSongMetaByArtistIdAndOriginalUrl(Long artistId, String originalUrl){
+        if (!songMetaRepository.existsByArtistId(artistId)) {
+            throw new ResourceNotFoundException("SongMetas for artis id was not found: " + artistId);
+        }
+        SongMeta foundSongMeta = songMetaRepository.findSongMetaByArtistIdAndOriginalUrl(artistId, originalUrl);
+        return convertToDto(foundSongMeta);
+    }
+
     @Transactional
     public SongMetaDto createSongMeta(Long artistId, SongMetaRequest songMetaRequest) {
-        if (songMetaRepository.existsByUrl(songMetaRequest.getUrl())) {
+        if (songMetaRepository.existsByOriginalUrl(songMetaRequest.getUrl())) {
             throw new SongAlreadyExistsException("SongMeta url already in use: " + songMetaRequest.getUrl());
         }
 
@@ -82,7 +90,11 @@ public class SongMetaService {
 
         songMeta.setArtistId(artistId);
         songMeta.setUrl(songMetaRequest.getUrl());
+        songMeta.setHlsMasterPlaylistUrl(songMetaRequest.getHlsMasterPlaylistUrl());
         songMeta.setTitle(songMetaRequest.getTitle());
+        songMeta.setProcessingStatus(songMetaRequest.getProcessingStatus());
+        songMeta.setDurationSeconds(songMetaRequest.getDurationSeconds());
+        songMeta.setAvailableBitrates(songMetaRequest.getAvailableBitrates());
 
         SongMeta savedSongMeta = songMetaRepository.save(songMeta);
 
@@ -108,7 +120,7 @@ public class SongMetaService {
         songMetaDto.setId(songMeta.getId());
         songMetaDto.setArtistId(songMeta.getArtistId());
         songMetaDto.setTitle(songMeta.getTitle());
-        songMetaDto.setUrl(songMeta.getUrl());
+        songMetaDto.setOriginalUrl(songMeta.getUrl());
         return songMetaDto;
     }
 

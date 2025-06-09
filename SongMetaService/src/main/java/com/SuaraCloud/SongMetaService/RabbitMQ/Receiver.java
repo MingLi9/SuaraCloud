@@ -31,8 +31,10 @@ public class Receiver {
         try {
             switch (event.getName()) {
                 case "create_song":
-                case "update_song":
-                    handleCreateOrUpdate(event);
+                    handleCreate(event);
+                    break;
+                case "update_song_hls":
+                    handleUpdate(event);
                     break;
                 case "delete_song":
                     handleDeleteSong(event);
@@ -48,37 +50,49 @@ public class Receiver {
         }
     }
 
-    private void handleCreateOrUpdate(EventMessage event) {
+    private void handleCreate(EventMessage event) {
         try{
             SongMetaDto songMetaDto = objectMapper.treeToValue(event.getBody(), SongMetaDto.class);
-            if(songMetaDto.getId() == null) {
-                Long artistId = songMetaDto.getArtistId();
+            Long artistId = songMetaDto.getArtistId();
 
-                SongMetaRequest songMetaRequest = new SongMetaRequest();
-                songMetaRequest.setUrl(songMetaDto.getUrl());
-                songMetaRequest.setTitle(songMetaDto.getTitle());
-
-                try{
-                    songMetaService.createSongMeta(artistId, songMetaRequest);
-                }
-                catch(Exception e){
-                    System.err.println("Failed to create song: " + e.getMessage());
-                }
+            SongMetaRequest songMetaRequest = new SongMetaRequest();
+            songMetaRequest.setUrl(songMetaDto.getOriginalUrl());
+            songMetaRequest.setTitle(songMetaDto.getTitle());
+            songMetaRequest.setProcessingStatus(songMetaDto.getProcessingStatus());
+            try{
+                songMetaService.createSongMeta(artistId, songMetaRequest);
             }
-            else {
-                Long artistId = songMetaDto.getArtistId();
-                Long id = songMetaDto.getId();
+            catch(Exception e){
+                System.err.println("Failed to create song: " + e.getMessage());
+            }
+        }
+        catch(Exception e){
+            System.err.println("Failed to parse body: " + e.getMessage());
+        }
+    }
 
-                SongMetaRequest songMetaRequest = new SongMetaRequest();
-                songMetaRequest.setUrl(songMetaDto.getUrl());
-                songMetaRequest.setTitle(songMetaDto.getTitle());
+    private void handleUpdate(EventMessage event) {
+        try{
+            System.out.println("Received update event:\n"+event.getBody());
+            SongMetaDto songMetaDto = objectMapper.treeToValue(event.getBody(), SongMetaDto.class);
+            Long artistId = songMetaDto.getArtistId();
 
-                try{
-                    songMetaService.updateSongMeta(artistId, id, songMetaRequest);
-                }
-                catch(Exception e){
-                    System.err.println("Failed to update song: " + e.getMessage());
-                }
+            // Since we don't have the song meta id, we need to find it by artist id and song title
+            Long id = songMetaService.getSongMetaByArtistIdAndOriginalUrl(artistId, songMetaDto.getOriginalUrl()).getId();
+
+            SongMetaRequest songMetaRequest = new SongMetaRequest();
+            songMetaRequest.setUrl(songMetaDto.getOriginalUrl());
+            songMetaRequest.setTitle(songMetaDto.getTitle());
+            songMetaRequest.setHlsMasterPlaylistUrl(songMetaDto.getHlsMasterPlaylistUrl());
+            songMetaRequest.setProcessingStatus(songMetaDto.getProcessingStatus());
+            songMetaRequest.setDurationSeconds(songMetaDto.getDurationSeconds());
+            songMetaRequest.setAvailableBitrates(songMetaDto.getAvailableBitrates());
+
+            try{
+                songMetaService.updateSongMeta(artistId, id, songMetaRequest);
+            }
+            catch(Exception e){
+                System.err.println("Failed to update song: " + e.getMessage());
             }
         }
         catch(Exception e){

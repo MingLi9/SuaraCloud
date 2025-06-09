@@ -1,5 +1,8 @@
 package com.SuaraCloud.SongService.Controller;
 
+import com.SuaraCloud.SongService.RabbitMQ.Payload;
+import com.SuaraCloud.SongService.RabbitMQ.ProcessingStatus;
+import com.SuaraCloud.SongService.Service.AudioProcessingCoordinator;
 import com.SuaraCloud.SongService.Service.BlobStorageService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.InputStreamResource;
@@ -20,33 +23,52 @@ import java.util.List;
 public class AudioStreamingController {
 
     @Autowired
+    private AudioProcessingCoordinator coordinator;
+    @Autowired
     private BlobStorageService blobStorageService;
 
-    @PostMapping(value = "/upload/{title}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadFile(
             @RequestPart("file") MultipartFile file,
-            @PathVariable("title") String title,
             HttpServletRequest request) {
+
+        System.out.println("Request received");
+        System.out.println("Content-Type: " + request.getContentType());
+        System.out.println("Content-Length: " + request.getContentLength());
+
         try {
+            System.out.println("File is empty: " + file.isEmpty());
+            System.out.println("File name: " + file.getOriginalFilename());
+            System.out.println("File size: " + file.getSize());
+            System.out.println("File content type: " + file.getContentType());
+
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body("Please upload a file");
             }
 
-            // Check if file is an MP3
             if (!file.getContentType().equals("audio/mpeg")) {
                 return ResponseEntity.badRequest().body("Only MP3 files are supported");
             }
 
+            // Extract title from filename
+            String originalFilename = file.getOriginalFilename();
+            String title = originalFilename.substring(0, originalFilename.lastIndexOf('.'));
+
             String userIdString = (String) request.getAttribute("userId");
             Long artistId = Long.parseLong(userIdString);
 
-            // Upload file to Azure Blob Storage
-            String blobUrl = blobStorageService.uploadFile(file, title, artistId);
-            return ResponseEntity.ok("File uploaded successfully: " + blobUrl);
+            String blobUrl = coordinator.uploadAndProcessFile(file, title, artistId);
+
+            return ResponseEntity.ok("File uploaded successfully. HLS processing started: " + blobUrl);
         } catch (Exception e) {
+            e.printStackTrace(); // Add this to see the full stack trace
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to upload file: " + e.getMessage());
         }
+    }
+
+    private String extractBlobNameFromUrl(String blobUrl) {
+        return blobUrl.substring(blobUrl.lastIndexOf('/') + 1);
     }
 
     @GetMapping("/{filename}")

@@ -8,8 +8,10 @@ import java.util.List;
 
 @Repository
 public interface SongMetaRepository extends JpaRepository<SongMeta, Long> {
-    boolean existsByUrl(String url);
-    SongMeta findSongMetaByUrl(String url);
+    boolean existsByOriginalUrl(String originalUrl);
+    SongMeta findSongMetaByOriginalUrl(String originalUrl);
     boolean existsByArtistId(Long artistId);
     List<SongMeta> findSongMetaByArtistId(Long artistId);
+
+    SongMeta findSongMetaByArtistIdAndOriginalUrl(Long artistId, String originalUrl);
 }
