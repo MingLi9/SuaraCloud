@@ -72,17 +72,26 @@ public class BlobStorageService {
         return blobClient.getBlobUrl();
     }
 
-    public InputStream downloadFile(String blobName) {
-        ensureContainerExists();
+    public InputStream downloadFile(String blobPath) {
+        try {
+            // Check if this is a path or just a filename
+            String containerName = "suarasongs"; // Replace with your actual container name
 
-        BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(CONTAINER_NAME);
-        BlobClient blobClient = containerClient.getBlobClient(blobName);
+            BlobClient blobClient = blobServiceClient
+                    .getBlobContainerClient(containerName)
+                    .getBlobClient(blobPath);
 
-        if (!blobClient.exists()) {
+            if (!blobClient.exists()) {
+                System.out.println("Blob does not exist: " + blobPath);
+                return null;
+            }
+
+            return blobClient.openInputStream();
+        } catch (Exception e) {
+            System.out.println("Error downloading blob: " + blobPath);
+            e.printStackTrace();
             return null;
         }
-
-        return blobClient.openInputStream();
     }
 
     public List<String> listFiles() {

@@ -96,6 +96,146 @@ public class AudioStreamingController {
         }
     }
 
+    // Example: http://localhost:8085/songs/hls/bf141b6a-f341-4e1c-8e6c-4b3b8abd8510/128k/playlist.m3u8
+    @GetMapping("/hls/{uuid}/{bitrate}/{playlist}")
+    public ResponseEntity<Resource> streamAudioHLS(
+            @PathVariable String uuid,
+            @PathVariable String bitrate,
+            @PathVariable String playlist) {
+        try {
+            // Construct the blob path
+            String blobPath = "hls/" + uuid + "/" + bitrate + "/" + playlist;
+            System.out.println("Requesting HLS file: " + blobPath);
+
+            // Get the playlist file from Azure Blob Storage
+            InputStream inputStream = blobStorageService.downloadFile(blobPath);
+
+            if (inputStream == null) {
+                System.out.println("HLS file not found: " + blobPath);
+                return ResponseEntity.notFound().build();
+            }
+
+            // Set the response headers for streaming the playlist
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.setContentType(MediaType.parseMediaType("application/vnd.apple.mpegurl"));
+            responseHeaders.add("Cache-Control", "no-cache");
+
+            // Return the playlist as a stream
+            return ResponseEntity.ok()
+                    .headers(responseHeaders)
+                    .body(new InputStreamResource(inputStream));
+        } catch (Exception e) {
+            System.out.println("Error streaming HLS file: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/hls/{uuid}/master.m3u8")
+    public ResponseEntity<Resource> getMasterPlaylist(@PathVariable String uuid) {
+        try {
+            // Construct the blob path
+            String blobPath = "hls/" + uuid + "/master.m3u8";
+            System.out.println("Requesting master playlist: " + blobPath);
+
+            // Get the master playlist file from Azure Blob Storage
+            InputStream inputStream = blobStorageService.downloadFile(blobPath);
+
+            if (inputStream == null) {
+                System.out.println("Master playlist not found: " + blobPath);
+                return ResponseEntity.notFound().build();
+            }
+
+            // Set the response headers
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.setContentType(MediaType.parseMediaType("application/vnd.apple.mpegurl"));
+            responseHeaders.add("Cache-Control", "no-cache");
+
+            // Return the master playlist as a stream
+            return ResponseEntity.ok()
+                    .headers(responseHeaders)
+                    .body(new InputStreamResource(inputStream));
+        } catch (Exception e) {
+            System.out.println("Error streaming master playlist: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/hls/{uuid}/{bitrate}/segment_{segmentNumber}.ts")
+    public ResponseEntity<Resource> getSegment(
+            @PathVariable String uuid,
+            @PathVariable String bitrate,
+            @PathVariable String segmentNumber) {
+        try {
+            // Construct the blob path
+            String blobPath = "hls/" + uuid + "/" + bitrate + "/segment_" + segmentNumber + ".ts";
+            System.out.println("Requesting segment: " + blobPath);
+
+            // Get the segment file from Azure Blob Storage
+            InputStream inputStream = blobStorageService.downloadFile(blobPath);
+
+            if (inputStream == null) {
+                System.out.println("Segment not found: " + blobPath);
+                return ResponseEntity.notFound().build();
+            }
+
+            // Set the response headers
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.setContentType(MediaType.parseMediaType("video/mp2t"));
+            responseHeaders.add("Cache-Control", "public, max-age=31536000"); // Cache segments for 1 year
+
+            // Return the segment as a stream
+            return ResponseEntity.ok()
+                    .headers(responseHeaders)
+                    .body(new InputStreamResource(inputStream));
+        } catch (Exception e) {
+            System.out.println("Error streaming segment: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/hls/**")
+    public ResponseEntity<Resource> getAnyHlsFile(HttpServletRequest request) {
+        try {
+            // Extract the path from the request
+            String requestPath = request.getRequestURI();
+            String blobPath = requestPath.substring(requestPath.indexOf("/hls/") + 1); // +1 to remove the leading slash
+
+            System.out.println("Requesting any HLS file: " + blobPath);
+
+            // Get the file from Azure Blob Storage
+            InputStream inputStream = blobStorageService.downloadFile(blobPath);
+
+            if (inputStream == null) {
+                System.out.println("HLS file not found: " + blobPath);
+                return ResponseEntity.notFound().build();
+            }
+
+            // Set the response headers based on file extension
+            HttpHeaders responseHeaders = new HttpHeaders();
+            if (blobPath.endsWith(".m3u8")) {
+                responseHeaders.setContentType(MediaType.parseMediaType("application/vnd.apple.mpegurl"));
+                responseHeaders.add("Cache-Control", "no-cache");
+            } else if (blobPath.endsWith(".ts")) {
+                responseHeaders.setContentType(MediaType.parseMediaType("video/mp2t"));
+                responseHeaders.add("Cache-Control", "public, max-age=31536000");
+            } else {
+                responseHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            }
+
+            // Return the file as a stream
+            return ResponseEntity.ok()
+                    .headers(responseHeaders)
+                    .body(new InputStreamResource(inputStream));
+        } catch (Exception e) {
+            System.out.println("Error streaming HLS file: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @GetMapping("/list")
     public ResponseEntity<List<String>> listFiles() {
         try {

@@ -121,6 +121,10 @@ public class SongMetaService {
         songMetaDto.setArtistId(songMeta.getArtistId());
         songMetaDto.setTitle(songMeta.getTitle());
         songMetaDto.setOriginalUrl(songMeta.getUrl());
+        songMetaDto.setDurationSeconds(songMeta.getDurationSeconds());
+        songMetaDto.setAvailableBitrates(songMeta.getAvailableBitrates());
+        songMetaDto.setProcessingStatus(songMeta.getProcessingStatus());
+        songMetaDto.setHlsMasterPlaylistUrl(songMeta.getHlsMasterPlaylistUrl());
         return songMetaDto;
     }
 
