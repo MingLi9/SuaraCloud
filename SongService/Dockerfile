@@ -7,6 +7,15 @@ RUN mvn package -DskipTests
 
 FROM openjdk:17-alpine
 WORKDIR /app
+
+# Install FFmpeg using Alpine's package manager (apk)
+RUN apk update && \
+    apk add --no-cache ffmpeg && \
+    rm -rf /var/cache/apk/*
+
+# Verify installation
+RUN ffmpeg -version && ffprobe -version
+
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 9091
 ENTRYPOINT ["java", "-jar", "app.jar"]

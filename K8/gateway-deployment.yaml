@@ -19,7 +19,7 @@ spec:
                       - name: EUREKA_URL
                         value: http://eureka:8761/eureka/
                       - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
-                        value: "true"
+                        value: 'true'
                       - name: EUREKA_INSTANCE_HOSTNAME
                         value: gateway
                   image: mingli99/gateway:latest
@@ -27,4 +27,11 @@ spec:
                   ports:
                       - containerPort: 8085
                         protocol: TCP
+                  resources:
+                      requests:
+                          cpu: '250m'
+                          memory: '250Mi'
+                      limits:
+                          cpu: '500m'
+                          memory: '500Mi'
             restartPolicy: Always

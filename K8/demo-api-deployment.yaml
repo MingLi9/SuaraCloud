@@ -19,7 +19,7 @@ spec:
                       - name: EUREKA_URL
                         value: http://eureka:8761/eureka/
                       - name: RABBITMQ_PORT
-                        value: "5672"
+                        value: '5672'
                       - name: RABBITMQ_PW
                         value: secret
                       - name: RABBITMQ_URL
@@ -27,7 +27,7 @@ spec:
                       - name: RABBITMQ_USER
                         value: myuser
                       - name: EUREKA_INSTANCE_PREFER_IP_ADDRESS
-                        value: "true"
+                        value: 'true'
                       - name: EUREKA_INSTANCE_HOSTNAME
                         value: demo-api
                   image: mingli99/demo-api:latest
@@ -35,4 +35,11 @@ spec:
                   ports:
                       - containerPort: 9090
                         protocol: TCP
+                  resources:
+                      requests:
+                          cpu: '250m'
+                          memory: '250Mi'
+                      limits:
+                          cpu: '500m'
+                          memory: '500Mi'
             restartPolicy: Always

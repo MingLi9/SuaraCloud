@@ -13,4 +13,8 @@ public class UserValidationResponse {
     private String firstName;
     private String lastName;
     private String email;
+
+    public String getId(){
+        return id;
+    }
 }

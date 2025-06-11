@@ -5,8 +5,13 @@ import lombok.*;
 @Data
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class PayloadDelete {
     private String url;
+
+    public PayloadDelete(String url) {
+        this.url = url;
+    }
+
+    public PayloadDelete() {
+    }
 }
