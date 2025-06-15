@@ -41,4 +41,11 @@ spec:
                   ports:
                       - containerPort: 8087
                         protocol: TCP
+                  resources:
+                      requests:
+                          cpu: '250m'
+                          memory: '250Mi'
+                      limits:
+                          cpu: '500m'
+                          memory: '500Mi'
             restartPolicy: Always

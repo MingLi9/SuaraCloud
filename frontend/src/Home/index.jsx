@@ -57,7 +57,7 @@ function App({ logout }) {
                 setCurrentSong(song);
 
                 // Set the audio source to the song URL
-                audioElement.src = `${gatewayUrl}/songs/play/${song.id}`;
+                audioElement.src = `${gatewayUrl}/songs/${song.id}`;
 
                 // Play the audio
                 audioElement

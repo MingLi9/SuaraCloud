@@ -31,7 +31,7 @@ spec:
                       - name: EUREKA_INSTANCE_HOSTNAME
                         value: user-service
                       - name: DATABASE_URL
-                        value: jdbc:postgresql://ep-winter-water-a9rvco0t-pooler.gwc.azure.neon.tech/userservice-db?sslmode=require
+                        value: jdbc:postgresql://ep-winter-water-a9rvco0t-pooler.gwc.azure.neon.tech/songmetaservice-db?user=neondb_owner&password=npg_xeRz6bYNUo0G&sslmode=require
                       - name: DATABASE_USERNAME
                         value: neondb_owner
                       - name: DATABASE_PASSWORD
@@ -41,4 +41,11 @@ spec:
                   ports:
                       - containerPort: 8087
                         protocol: TCP
+                  resources:
+                      requests:
+                          cpu: '250m'
+                          memory: '250Mi'
+                      limits:
+                          cpu: '500m'
+                          memory: '500Mi'
             restartPolicy: Always

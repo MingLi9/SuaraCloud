@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+    name: auth-service
     labels:
         io.kompose.service: auth-service
-    name: auth-service
 spec:
     replicas: 1
     selector:
@@ -15,7 +15,12 @@ spec:
                 io.kompose.service: auth-service
         spec:
             containers:
-                - env:
+                - name: auth-service
+                  image: mingli99/authservice:latest
+                  ports:
+                      - containerPort: 8087
+                        protocol: TCP
+                  env:
                       - name: EUREKA_URL
                         value: http://eureka:8761/eureka/
                       - name: RABBITMQ_PORT
@@ -50,9 +55,11 @@ spec:
                             secretKeyRef:
                                 name: auth-service-secrets
                                 key: JWT_SECRET
-                  image: mingli99/authservice:latest
-                  name: auth-service
-                  ports:
-                      - containerPort: 8087
-                        protocol: TCP
+                  resources:
+                      requests:
+                          cpu: '250m'
+                          memory: '250Mi'
+                      limits:
+                          cpu: '500m'
+                          memory: '500Mi'
             restartPolicy: Always
