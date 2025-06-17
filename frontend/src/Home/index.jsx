@@ -1,6 +1,4 @@
-'use client';
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import gatewayUrl from '../config';
 import Sidebar from '../components/Sidebar';
 import MainContent from '../components/MainContent';
@@ -11,6 +9,24 @@ function App({ logout }) {
     const [currentSong, setCurrentSong] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [audioElement, setAudioElement] = useState(null);
+
+    const fetchSongs = useCallback(async () => {
+        try {
+            const response = await fetch(`${gatewayUrl}/songs/list`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch songs');
+            }
+            const data = await response.json();
+            setSongs(data);
+
+            // Set the first song as current if available
+            if (data.length > 0 && !currentSong) {
+                setCurrentSong(data[0]);
+            }
+        } catch (error) {
+            console.error('Error fetching songs:', error);
+        }
+    }, [currentSong]);
 
     useEffect(() => {
         // Fetch songs when component mounts
@@ -27,25 +43,7 @@ function App({ logout }) {
                 audio.src = '';
             }
         };
-    }, []);
-
-    const fetchSongs = async () => {
-        try {
-            const response = await fetch(`${gatewayUrl}/songs/list`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch songs');
-            }
-            const data = await response.json();
-            setSongs(data);
-
-            // Set the first song as current if available
-            if (data.length > 0 && !currentSong) {
-                setCurrentSong(data[0]);
-            }
-        } catch (error) {
-            console.error('Error fetching songs:', error);
-        }
-    };
+    }, [fetchSongs]);
 
     const playSong = async (song) => {
         try {
