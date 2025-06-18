@@ -153,21 +153,21 @@ services:
         depends_on:
             - eureka
 
-    logging-service:
-        image: mingli99/loggingservice:latest
-        ports:
-            - '8088:8088'
-        networks:
-            - suara-cloud
-        environment:
-            - RABBITMQ_URL=rabbitmq
-            - RABBITMQ_PORT=5672
-            - RABBITMQ_USER=myuser
-            - RABBITMQ_PW=secret
-            - EUREKA_URL=http://eureka:8761/eureka/
-        restart: always
-        depends_on:
-            - eureka
+    # logging-service:
+    #     image: mingli99/loggingservice:latest
+    #     ports:
+    #         - '8088:8088'
+    #     networks:
+    #         - suara-cloud
+    #     environment:
+    #         - RABBITMQ_URL=rabbitmq
+    #         - RABBITMQ_PORT=5672
+    #         - RABBITMQ_USER=myuser
+    #         - RABBITMQ_PW=secret
+    #         - EUREKA_URL=http://eureka:8761/eureka/
+    #     restart: always
+    #     depends_on:
+    #         - eureka
 
 networks:
     suara-cloud:
