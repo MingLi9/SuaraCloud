@@ -1,8 +1,15 @@
 services:
     frontend:
-        image: mingli99/frontend:latest
+        # image: mingli99/frontend:latest
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
         ports:
             - '80:80'
+        environment:
+            - REACT_APP_GATEWAY_URL=http://localhost:8085
+            - REACT_APP_SUPABASE_URL=${REACT_APP_SUPABASE_URL}
+            - REACT_APP_SUPABASE_KEY=${JWT_SECRET}
         networks:
             - suara-cloud
         restart: always
@@ -34,6 +41,9 @@ services:
 
     gateway:
         image: mingli99/gateway:latest
+        # build:
+        #     context: ./Gateway
+        #     dockerfile: Dockerfile
         ports:
             - '8085:8085'
         networks:
@@ -62,7 +72,10 @@ services:
             - rabbitmq
 
     song-service:
-        image: mingli99/songservice:latest
+        # image: mingli99/songservice:latest
+        build:
+            context: ./SongService
+            dockerfile: Dockerfile
         ports:
             - '9091:9091'
         networks:
@@ -73,13 +86,17 @@ services:
             - RABBITMQ_USER=myuser
             - RABBITMQ_PW=secret
             - EUREKA_URL=http://eureka:8761/eureka/
+            - AZURE_STORAGE_CONNECTION_STRING=${AZURE_STORAGE_CONNECTION_STRING}
         restart: always
         depends_on:
             - eureka
             - rabbitmq
 
     song-meta-service:
-        image: mingli99/songmetaservice:latest
+        # image: mingli99/songmetaservice:latest
+        build:
+            context: ./SongMetaService
+            dockerfile: Dockerfile
         ports:
             - '9092:9092'
         networks:
@@ -90,6 +107,9 @@ services:
             - RABBITMQ_USER=myuser
             - RABBITMQ_PW=secret
             - EUREKA_URL=http://eureka:8761/eureka/
+            - DATABASE_URL=${SONG_META_DATABASE_URL}
+            - DATABASE_USERNAME=${SONG_META_DATABASE_USERNAME}
+            - DATABASE_PASSWORD=${SONG_META_DATABASE_PASSWORD}
         restart: always
         depends_on:
             - eureka
@@ -106,13 +126,16 @@ services:
             - RABBITMQ_USER=myuser
             - RABBITMQ_PW=secret
             - EUREKA_URL=http://eureka:8761/eureka/
-            - JWT_SECRET=JJ5KcwkeMPtdCIqTytKoM5GqgY/2gtXSTS7coCKH9uteTp6sWel6UyRb8g+iFxh1nlYJJ+AS3CSu4eitpXn/+g==
+            - JWT_SECRET=${JWT_SECRET}
         restart: always
         depends_on:
             - eureka
 
     user-service:
         image: mingli99/userservice:latest
+        # build:
+        #     context: ./UserService
+        #     dockerfile: Dockerfile
         ports:
             - '8087:8087'
         networks:
@@ -123,27 +146,28 @@ services:
             - RABBITMQ_USER=myuser
             - RABBITMQ_PW=secret
             - EUREKA_URL=http://eureka:8761/eureka/
-            - DATABASE_USERNAME=neondb_owner
-            - DATABASE_PASSWORD=npg_xeRz6bYNUo0G
+            - DATABASE_URL=${USER_SERVICE_DATABASE_URL}
+            - DATABASE_USERNAME=${USER_SERVICE_DATABASE_USERNAME}
+            - DATABASE_PASSWORD=${USER_SERVICE_DATABASE_PASSWORD}
         restart: always
         depends_on:
             - eureka
 
-    logging-service:
-        image: mingli99/loggingservice:latest
-        ports:
-            - '8088:8088'
-        networks:
-            - suara-cloud
-        environment:
-            - RABBITMQ_URL=rabbitmq
-            - RABBITMQ_PORT=5672
-            - RABBITMQ_USER=myuser
-            - RABBITMQ_PW=secret
-            - EUREKA_URL=http://eureka:8761/eureka/
-        restart: always
-        depends_on:
-            - eureka
+    # logging-service:
+    #     image: mingli99/loggingservice:latest
+    #     ports:
+    #         - '8088:8088'
+    #     networks:
+    #         - suara-cloud
+    #     environment:
+    #         - RABBITMQ_URL=rabbitmq
+    #         - RABBITMQ_PORT=5672
+    #         - RABBITMQ_USER=myuser
+    #         - RABBITMQ_PW=secret
+    #         - EUREKA_URL=http://eureka:8761/eureka/
+    #     restart: always
+    #     depends_on:
+    #         - eureka
 
 networks:
     suara-cloud:

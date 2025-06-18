@@ -1,19 +1,29 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
-
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
+test('Login-Logout', async ({ page }) => {
+    await page.goto('http://localhost:80/login');
+    await page.getByRole('textbox', { name: 'Email address' }).click();
+    await page
+        .getByRole('textbox', { name: 'Email address' })
+        .fill('janssenming@gmail.com');
+    await page.getByRole('textbox', { name: 'Password' }).click();
+    await page.getByRole('textbox', { name: 'Password' }).fill('#0909Ming');
+    await page.getByTestId('login-submit').click();
+    await page.getByRole('heading', { name: 'Recently Played' }).click();
+    await page.getByRole('button', { name: 'Logout' }).click();
 });
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
-
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
-
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+test('test-page', async ({ page }) => {
+    await page.goto('http://localhost:80/login');
+    await page.getByRole('textbox', { name: 'Email address' }).click();
+    await page
+        .getByRole('textbox', { name: 'Email address' })
+        .fill('janssenming@gmail.com');
+    await page.getByRole('textbox', { name: 'Password' }).click();
+    await page.getByRole('textbox', { name: 'Password' }).fill('#0909Ming');
+    await page.getByTestId('login-submit').click();
+    await page.getByRole('heading', { name: 'Recently Played' }).click();
+    await page.goto('http://localhost:80/test');
+    await page.getByRole('button', { name: '128k' }).click();
 });
