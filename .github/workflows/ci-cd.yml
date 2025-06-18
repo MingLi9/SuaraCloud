@@ -85,17 +85,6 @@ jobs:
               working-directory: ./frontend
               run: npm run build
 
-            # - name: Run Jest tests with coverage
-            #   working-directory: ./frontend
-            #   run: npm test -- --coverage
-
-            # - name: Upload Jest Coverage Artifact
-            #   uses: actions/upload-artifact@v4
-            #   with:
-            #       name: jest-coverage
-            #       path: frontend/coverage/lcov.info
-            #       retention-days: 1
-
     gateway-build-test:
         needs: detect-changes
         if: needs.detect-changes.outputs.gateway == 'true'
@@ -159,150 +148,230 @@ jobs:
             SONAR_PROJECT_KEY: SuaraCloud_loggingservice
         secrets: inherit
 
-    # Docker Build Phase - Only for changed services
-    docker-build-push:
-        name: Build & Push Docker Images
+    # Separate Docker build jobs for each service
+    docker-build-frontend:
+        name: Build & Push Frontend Docker Image
+        needs: [detect-changes, frontend-build-test]
+        if: needs.detect-changes.outputs.frontend == 'true'
         runs-on: ubuntu-latest
-        needs:
-            - detect-changes
-            - frontend-build-test
-            - gateway-build-test
-            - eureka-build-test
-            - songservice-build-test
-            - songmetaservice-build-test
-            - authservice-build-test
-            - userservice-build-test
-            - loggingservice-build-test
-        if: |
-            always() && 
-            needs.detect-changes.outputs.any-service-changed == 'true' &&
-            !contains(needs.*.result, 'failure') &&
-            !contains(needs.*.result, 'cancelled')
-        strategy:
-            matrix:
-                include:
-                    - service: frontend
-                      dockerfile_path: ./frontend
-                      image_name: frontend
-                    - service: gateway
-                      dockerfile_path: ./Gateway
-                      image_name: gateway
-                    - service: eureka
-                      dockerfile_path: ./Eureka
-                      image_name: eureka
-                    - service: SongService
-                      dockerfile_path: ./SongService
-                      image_name: songservice
-                    - service: SongMetaService
-                      dockerfile_path: ./SongMetaService
-                      image_name: songmetaservice
-                    - service: AuthService
-                      dockerfile_path: ./AuthService
-                      image_name: authservice
-                    - service: UserService
-                      dockerfile_path: ./UserService
-                      image_name: userservice
-                    - service: LoggingService
-                      dockerfile_path: ./LoggingService
-                      image_name: loggingservice
         steps:
-            - name: Check if service changed
-              id: check-service
-              run: |
-                  case "${{ matrix.service }}" in
-                    "frontend")
-                      if [[ "${{ needs.detect-changes.outputs.frontend }}" == "true" ]]; then
-                        echo "changed=true" >> $GITHUB_OUTPUT
-                      else
-                        echo "changed=false" >> $GITHUB_OUTPUT
-                      fi
-                      ;;
-                    "gateway")
-                      if [[ "${{ needs.detect-changes.outputs.gateway }}" == "true" ]]; then
-                        echo "changed=true" >> $GITHUB_OUTPUT
-                      else
-                        echo "changed=false" >> $GITHUB_OUTPUT
-                      fi
-                      ;;
-                    "eureka")
-                      if [[ "${{ needs.detect-changes.outputs.eureka }}" == "true" ]]; then
-                        echo "changed=true" >> $GITHUB_OUTPUT
-                      else
-                        echo "changed=false" >> $GITHUB_OUTPUT
-                      fi
-                      ;;
-                    "SongService")
-                      if [[ "${{ needs.detect-changes.outputs.SongService }}" == "true" ]]; then
-                        echo "changed=true" >> $GITHUB_OUTPUT
-                      else
-                        echo "changed=false" >> $GITHUB_OUTPUT
-                      fi
-                      ;;
-                    "SongMetaService")
-                      if [[ "${{ needs.detect-changes.outputs.SongMetaService }}" == "true" ]]; then
-                        echo "changed=true" >> $GITHUB_OUTPUT
-                      else
-                        echo "changed=false" >> $GITHUB_OUTPUT
-                      fi
-                      ;;
-                    "AuthService")
-                      if [[ "${{ needs.detect-changes.outputs.AuthService }}" == "true" ]]; then
-                        echo "changed=true" >> $GITHUB_OUTPUT
-                      else
-                        echo "changed=false" >> $GITHUB_OUTPUT
-                      fi
-                      ;;
-                    "UserService")
-                      if [[ "${{ needs.detect-changes.outputs.UserService }}" == "true" ]]; then
-                        echo "changed=true" >> $GITHUB_OUTPUT
-                      else
-                        echo "changed=false" >> $GITHUB_OUTPUT
-                      fi
-                      ;;
-                    "LoggingService")
-                      if [[ "${{ needs.detect-changes.outputs.LoggingService }}" == "true" ]]; then
-                        echo "changed=true" >> $GITHUB_OUTPUT
-                      else
-                        echo "changed=false" >> $GITHUB_OUTPUT
-                      fi
-                      ;;
-                  esac
-
-            - name: Skip if service unchanged
-              if: steps.check-service.outputs.changed != 'true'
-              run: echo "Skipping ${{ matrix.service }} - no changes detected"
-
             - name: Checkout Repository
-              if: steps.check-service.outputs.changed == 'true'
               uses: actions/checkout@v4
 
             - name: Login to Docker Hub
-              if: steps.check-service.outputs.changed == 'true'
               uses: docker/login-action@v3
               with:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-            - name: Build and Push Docker Image
-              if: steps.check-service.outputs.changed == 'true'
+            - name: Build and Push Frontend Docker Image
               run: |
-                  image_name_latest="${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image_name }}:latest"
-                  image_name_versioned="${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image_name }}:${{ github.run_number }}"
+                  image_name_latest="${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest"
+                  image_name_versioned="${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.run_number }}"
 
-                  if [ "${{ matrix.service }}" = "frontend" ]; then
-                    docker build \
-                      --build-arg REACT_APP_GATEWAY_URL=${{ secrets.REACT_APP_GATEWAY_URL }} \
-                      --build-arg REACT_APP_SUPABASE_URL=${{ secrets.REACT_APP_SUPABASE_URL }} \
-                      --build-arg REACT_APP_SUPABASE_KEY=${{ secrets.REACT_APP_SUPABASE_KEY }} \
-                      -t "$image_name_latest" \
-                      -t "$image_name_versioned" \
-                      "${{ matrix.dockerfile_path }}"
-                  else
-                    docker build \
-                      -t "$image_name_latest" \
-                      -t "$image_name_versioned" \
-                      "${{ matrix.dockerfile_path }}"
-                  fi
+                  docker build \
+                    --build-arg REACT_APP_GATEWAY_URL=${{ secrets.REACT_APP_GATEWAY_URL }} \
+                    --build-arg REACT_APP_SUPABASE_URL=${{ secrets.REACT_APP_SUPABASE_URL }} \
+                    --build-arg REACT_APP_SUPABASE_KEY=${{ secrets.REACT_APP_SUPABASE_KEY }} \
+                    -t "$image_name_latest" \
+                    -t "$image_name_versioned" \
+                    ./frontend
+
+                  docker push "$image_name_latest"
+                  docker push "$image_name_versioned"
+
+    docker-build-gateway:
+        name: Build & Push Gateway Docker Image
+        needs: [detect-changes, gateway-build-test]
+        if: needs.detect-changes.outputs.gateway == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Build and Push Gateway Docker Image
+              run: |
+                  image_name_latest="${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest"
+                  image_name_versioned="${{ secrets.DOCKERHUB_USERNAME }}/gateway:${{ github.run_number }}"
+
+                  docker build \
+                    -t "$image_name_latest" \
+                    -t "$image_name_versioned" \
+                    ./Gateway
+
+                  docker push "$image_name_latest"
+                  docker push "$image_name_versioned"
+
+    docker-build-eureka:
+        name: Build & Push Eureka Docker Image
+        needs: [detect-changes, eureka-build-test]
+        if: needs.detect-changes.outputs.eureka == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Build and Push Eureka Docker Image
+              run: |
+                  image_name_latest="${{ secrets.DOCKERHUB_USERNAME }}/eureka:latest"
+                  image_name_versioned="${{ secrets.DOCKERHUB_USERNAME }}/eureka:${{ github.run_number }}"
+
+                  docker build \
+                    -t "$image_name_latest" \
+                    -t "$image_name_versioned" \
+                    ./Eureka
+
+                  docker push "$image_name_latest"
+                  docker push "$image_name_versioned"
+
+    docker-build-songservice:
+        name: Build & Push SongService Docker Image
+        needs: [detect-changes, songservice-build-test]
+        if: needs.detect-changes.outputs.SongService == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Build and Push SongService Docker Image
+              run: |
+                  image_name_latest="${{ secrets.DOCKERHUB_USERNAME }}/songservice:latest"
+                  image_name_versioned="${{ secrets.DOCKERHUB_USERNAME }}/songservice:${{ github.run_number }}"
+
+                  docker build \
+                    -t "$image_name_latest" \
+                    -t "$image_name_versioned" \
+                    ./SongService
+
+                  docker push "$image_name_latest"
+                  docker push "$image_name_versioned"
+
+    docker-build-songmetaservice:
+        name: Build & Push SongMetaService Docker Image
+        needs: [detect-changes, songmetaservice-build-test]
+        if: needs.detect-changes.outputs.SongMetaService == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Build and Push SongMetaService Docker Image
+              run: |
+                  image_name_latest="${{ secrets.DOCKERHUB_USERNAME }}/songmetaservice:latest"
+                  image_name_versioned="${{ secrets.DOCKERHUB_USERNAME }}/songmetaservice:${{ github.run_number }}"
+
+                  docker build \
+                    -t "$image_name_latest" \
+                    -t "$image_name_versioned" \
+                    ./SongMetaService
+
+                  docker push "$image_name_latest"
+                  docker push "$image_name_versioned"
+
+    docker-build-authservice:
+        name: Build & Push AuthService Docker Image
+        needs: [detect-changes, authservice-build-test]
+        if: needs.detect-changes.outputs.AuthService == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Build and Push AuthService Docker Image
+              run: |
+                  image_name_latest="${{ secrets.DOCKERHUB_USERNAME }}/authservice:latest"
+                  image_name_versioned="${{ secrets.DOCKERHUB_USERNAME }}/authservice:${{ github.run_number }}"
+
+                  docker build \
+                    -t "$image_name_latest" \
+                    -t "$image_name_versioned" \
+                    ./AuthService
+
+                  docker push "$image_name_latest"
+                  docker push "$image_name_versioned"
+
+    docker-build-userservice:
+        name: Build & Push UserService Docker Image
+        needs: [detect-changes, userservice-build-test]
+        if: needs.detect-changes.outputs.UserService == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Build and Push UserService Docker Image
+              run: |
+                  image_name_latest="${{ secrets.DOCKERHUB_USERNAME }}/userservice:latest"
+                  image_name_versioned="${{ secrets.DOCKERHUB_USERNAME }}/userservice:${{ github.run_number }}"
+
+                  docker build \
+                    -t "$image_name_latest" \
+                    -t "$image_name_versioned" \
+                    ./UserService
+
+                  docker push "$image_name_latest"
+                  docker push "$image_name_versioned"
+
+    docker-build-loggingservice:
+        name: Build & Push LoggingService Docker Image
+        needs: [detect-changes, loggingservice-build-test]
+        if: needs.detect-changes.outputs.LoggingService == 'true'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: Login to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Build and Push LoggingService Docker Image
+              run: |
+                  image_name_latest="${{ secrets.DOCKERHUB_USERNAME }}/loggingservice:latest"
+                  image_name_versioned="${{ secrets.DOCKERHUB_USERNAME }}/loggingservice:${{ github.run_number }}"
+
+                  docker build \
+                    -t "$image_name_latest" \
+                    -t "$image_name_versioned" \
+                    ./LoggingService
 
                   docker push "$image_name_latest"
                   docker push "$image_name_versioned"
@@ -311,8 +380,19 @@ jobs:
         name: Integration Tests
         needs:
             - detect-changes
-            - docker-build-push
-        if: needs.detect-changes.outputs.any-service-changed == 'true'
+            - docker-build-frontend
+            - docker-build-gateway
+            - docker-build-eureka
+            - docker-build-songservice
+            - docker-build-songmetaservice
+            - docker-build-authservice
+            - docker-build-userservice
+            - docker-build-loggingservice
+        if: |
+            always() &&
+            needs.detect-changes.outputs.any-service-changed == 'true' &&
+            !contains(needs.*.result, 'failure') &&
+            !contains(needs.*.result, 'cancelled')
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
@@ -329,9 +409,12 @@ jobs:
         needs:
             - detect-changes
             - integration-tests
-        if: needs.detect-changes.outputs.any-service-changed == 'true'
+        if: |
+            always() &&
+            needs.detect-changes.outputs.any-service-changed == 'true' &&
+            !contains(needs.*.result, 'failure') &&
+            !contains(needs.*.result, 'cancelled')
         runs-on: ubuntu-latest
-
         services:
             rabbitmq:
                 image: rabbitmq:management
