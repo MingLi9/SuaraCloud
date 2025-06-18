@@ -326,53 +326,7 @@ jobs:
                   echo "REACT_APP_GATEWAY_URL=http://localhost:8085" >> .env
 
             - name: Start all services with Docker Compose
-              run: docker compose up -d --build
-
-            - name: Wait for services to be healthy
-              run: |
-                  echo "Waiting for services to start..."
-                  sleep 30
-
-                  # Check if Eureka is up
-                  for i in {1..30}; do
-                    if curl -s http://localhost:8761/actuator/health | grep -q '"status":"UP"'; then
-                      echo "Eureka is up."
-                      break
-                    fi
-                    echo "Waiting for Eureka..."
-                    sleep 10
-                  done
-
-                  # Wait additional time for service registration
-                  echo "Waiting for service registration..."
-                  sleep 60
-
-            - name: Check service status
-              run: |
-                  echo "=== Docker Compose Status ==="
-                  docker compose ps
-
-                  echo "=== Service Logs ==="
-                  docker compose logs --tail=50
-
-                  echo "=== Eureka Registry ==="
-                  curl -s http://localhost:8761/eureka/apps || echo "Eureka not accessible"
-
-            - name: Wait for frontend to be ready
-              run: |
-                  echo "Waiting for http://localhost to be up..."
-                  for i in {1..30}; do
-                    if curl -s http://localhost | grep -q '<!DOCTYPE html>'; then
-                      echo "Frontend is up."
-                      exit 0
-                    fi
-                    echo "Waiting... (attempt $i/30)"
-                    sleep 10
-                  done
-                  echo "Frontend did not start in time."
-                  echo "=== Frontend Logs ==="
-                  docker compose logs frontend
-                  exit 1
+              run: docker compose up -d
 
             - name: Install frontend dependencies
               working-directory: frontend
