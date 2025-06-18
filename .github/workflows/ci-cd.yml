@@ -72,18 +72,18 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
-            - name: Setup Node.js
-              uses: actions/setup-node@v3
-              with:
-                  node-version: '18'
+            # - name: Setup Node.js
+            #   uses: actions/setup-node@v3
+            #   with:
+            #       node-version: '18'
 
-            - name: Install dependencies
-              working-directory: ./frontend
-              run: npm install
+            # - name: Install dependencies
+            #   working-directory: ./frontend
+            #   run: npm install
 
-            - name: Build
-              working-directory: ./frontend
-              run: npm run build
+            # - name: Build
+            #   working-directory: ./frontend
+            #   run: npm run build
 
     # Java service builds (keeping existing structure)
     gateway-build-test:
@@ -183,16 +183,16 @@ jobs:
                   # Frontend
                   if [[ "${{ needs.detect-changes.outputs.frontend }}" == "true" ]]; then
                     echo "Building frontend..."
-                    docker build \
-                      --build-arg REACT_APP_GATEWAY_URL=${{ secrets.REACT_APP_GATEWAY_URL }} \
-                      --build-arg REACT_APP_SUPABASE_URL=${{ secrets.REACT_APP_SUPABASE_URL }} \
-                      --build-arg REACT_APP_SUPABASE_KEY=${{ secrets.REACT_APP_SUPABASE_KEY }} \
-                      -t "${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest" \
-                      -t "${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.run_number }}" \
-                      ./frontend
-                    docker push "${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest"
-                    docker push "${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.run_number }}"
-                  fi
+                  #   docker build \
+                  #     --build-arg REACT_APP_GATEWAY_URL=${{ secrets.REACT_APP_GATEWAY_URL }} \
+                  #     --build-arg REACT_APP_SUPABASE_URL=${{ secrets.REACT_APP_SUPABASE_URL }} \
+                  #     --build-arg REACT_APP_SUPABASE_KEY=${{ secrets.REACT_APP_SUPABASE_KEY }} \
+                  #     -t "${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest" \
+                  #     -t "${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.run_number }}" \
+                  #     ./frontend
+                  #   docker push "${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest"
+                  #   docker push "${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.run_number }}"
+                  # fi
 
                   # Gateway
                   if [[ "${{ needs.detect-changes.outputs.gateway }}" == "true" ]]; then
