@@ -59,7 +59,6 @@ jobs:
                         "${{ steps.filter.outputs.AuthService }}" == "true" || \
                         "${{ steps.filter.outputs.UserService }}" == "true" || \
                         "${{ steps.filter.outputs.LoggingService }}" == "true" ]]; then
-
                     echo "changed=true" >> $GITHUB_OUTPUT
                   else
                     echo "changed=false" >> $GITHUB_OUTPUT
@@ -183,68 +182,129 @@ jobs:
             matrix:
                 include:
                     - service: frontend
-                      condition: ${{ needs.detect-changes.outputs.frontend == 'true' }}
                       dockerfile_path: ./frontend
                       image_name: frontend
                     - service: gateway
-                      condition: ${{ needs.detect-changes.outputs.gateway == 'true' }}
                       dockerfile_path: ./Gateway
                       image_name: gateway
                     - service: eureka
-                      condition: ${{ needs.detect-changes.outputs.eureka == 'true' }}
                       dockerfile_path: ./Eureka
                       image_name: eureka
                     - service: SongService
-                      condition: ${{ needs.detect-changes.outputs.SongService == 'true' }}
                       dockerfile_path: ./SongService
                       image_name: songservice
                     - service: SongMetaService
-                      condition: ${{ needs.detect-changes.outputs.SongMetaService == 'true' }}
                       dockerfile_path: ./SongMetaService
                       image_name: songmetaservice
                     - service: AuthService
-                      condition: ${{ needs.detect-changes.outputs.AuthService == 'true' }}
                       dockerfile_path: ./AuthService
                       image_name: authservice
                     - service: UserService
-                      condition: ${{ needs.detect-changes.outputs.UserService == 'true' }}
                       dockerfile_path: ./UserService
                       image_name: userservice
                     - service: LoggingService
-                      condition: ${{ needs.detect-changes.outputs.LoggingService == 'true' }}
                       dockerfile_path: ./LoggingService
                       image_name: loggingservice
         steps:
+            - name: Check if service changed
+              id: check-service
+              run: |
+                  case "${{ matrix.service }}" in
+                    "frontend")
+                      if [[ "${{ needs.detect-changes.outputs.frontend }}" == "true" ]]; then
+                        echo "changed=true" >> $GITHUB_OUTPUT
+                      else
+                        echo "changed=false" >> $GITHUB_OUTPUT
+                      fi
+                      ;;
+                    "gateway")
+                      if [[ "${{ needs.detect-changes.outputs.gateway }}" == "true" ]]; then
+                        echo "changed=true" >> $GITHUB_OUTPUT
+                      else
+                        echo "changed=false" >> $GITHUB_OUTPUT
+                      fi
+                      ;;
+                    "eureka")
+                      if [[ "${{ needs.detect-changes.outputs.eureka }}" == "true" ]]; then
+                        echo "changed=true" >> $GITHUB_OUTPUT
+                      else
+                        echo "changed=false" >> $GITHUB_OUTPUT
+                      fi
+                      ;;
+                    "SongService")
+                      if [[ "${{ needs.detect-changes.outputs.SongService }}" == "true" ]]; then
+                        echo "changed=true" >> $GITHUB_OUTPUT
+                      else
+                        echo "changed=false" >> $GITHUB_OUTPUT
+                      fi
+                      ;;
+                    "SongMetaService")
+                      if [[ "${{ needs.detect-changes.outputs.SongMetaService }}" == "true" ]]; then
+                        echo "changed=true" >> $GITHUB_OUTPUT
+                      else
+                        echo "changed=false" >> $GITHUB_OUTPUT
+                      fi
+                      ;;
+                    "AuthService")
+                      if [[ "${{ needs.detect-changes.outputs.AuthService }}" == "true" ]]; then
+                        echo "changed=true" >> $GITHUB_OUTPUT
+                      else
+                        echo "changed=false" >> $GITHUB_OUTPUT
+                      fi
+                      ;;
+                    "UserService")
+                      if [[ "${{ needs.detect-changes.outputs.UserService }}" == "true" ]]; then
+                        echo "changed=true" >> $GITHUB_OUTPUT
+                      else
+                        echo "changed=false" >> $GITHUB_OUTPUT
+                      fi
+                      ;;
+                    "LoggingService")
+                      if [[ "${{ needs.detect-changes.outputs.LoggingService }}" == "true" ]]; then
+                        echo "changed=true" >> $GITHUB_OUTPUT
+                      else
+                        echo "changed=false" >> $GITHUB_OUTPUT
+                      fi
+                      ;;
+                  esac
+
             - name: Skip if service unchanged
-              if: matrix.condition != 'true'
+              if: steps.check-service.outputs.changed != 'true'
               run: echo "Skipping ${{ matrix.service }} - no changes detected"
 
             - name: Checkout Repository
-              if: matrix.condition == 'true'
+              if: steps.check-service.outputs.changed == 'true'
               uses: actions/checkout@v4
 
             - name: Login to Docker Hub
-              if: matrix.condition == 'true'
+              if: steps.check-service.outputs.changed == 'true'
               uses: docker/login-action@v3
               with:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
             - name: Build and Push Docker Image
-              if: matrix.condition == 'true'
+              if: steps.check-service.outputs.changed == 'true'
               run: |
-                  image_name="${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image_name }}:latest"
-                  image_name_versioned="${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image_name }}:${{ github.run_number}}"
+                  image_name_latest="${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image_name }}:latest"
+                  image_name_versioned="${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image_name }}:${{ github.run_number }}"
+
                   if [ "${{ matrix.service }}" = "frontend" ]; then
                     docker build \
                       --build-arg REACT_APP_GATEWAY_URL=${{ secrets.REACT_APP_GATEWAY_URL }} \
                       --build-arg REACT_APP_SUPABASE_URL=${{ secrets.REACT_APP_SUPABASE_URL }} \
                       --build-arg REACT_APP_SUPABASE_KEY=${{ secrets.REACT_APP_SUPABASE_KEY }} \
-                      -t "$image_name" "${{ matrix.dockerfile_path }}"
+                      -t "$image_name_latest" \
+                      -t "$image_name_versioned" \
+                      "${{ matrix.dockerfile_path }}"
                   else
-                    docker build -t "$image_name" "${{ matrix.dockerfile_path }}"
+                    docker build \
+                      -t "$image_name_latest" \
+                      -t "$image_name_versioned" \
+                      "${{ matrix.dockerfile_path }}"
                   fi
-                  docker push "$image_name"
+
+                  docker push "$image_name_latest"
                   docker push "$image_name_versioned"
 
     integration-tests:
@@ -347,7 +407,6 @@ jobs:
         needs:
             - detect-changes
             - e2e-tests
-            # - docker-build-push
 
         if: |
             needs.detect-changes.outputs.any-service-changed == 'true' &&
@@ -372,28 +431,28 @@ jobs:
 
                   # Only update images for changed services
                   if [[ "${{ needs.detect-changes.outputs.frontend }}" == "true" ]]; then
-                    kubectl set image deployment/frontend frontend=${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
+                    kubectl set image deployment/frontend frontend=${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ github.run_number }}
                   fi
                   if [[ "${{ needs.detect-changes.outputs.gateway }}" == "true" ]]; then
-                    kubectl set image deployment/gateway gateway=${{ secrets.DOCKERHUB_USERNAME }}/gateway:latest
+                    kubectl set image deployment/gateway gateway=${{ secrets.DOCKERHUB_USERNAME }}/gateway:${{ github.run_number }}
                   fi
                   if [[ "${{ needs.detect-changes.outputs.eureka }}" == "true" ]]; then
-                    kubectl set image deployment/eureka eureka=${{ secrets.DOCKERHUB_USERNAME }}/eureka:latest
+                    kubectl set image deployment/eureka eureka=${{ secrets.DOCKERHUB_USERNAME }}/eureka:${{ github.run_number }}
                   fi
                   if [[ "${{ needs.detect-changes.outputs.SongService }}" == "true" ]]; then
-                    kubectl set image deployment/song-service song-service=${{ secrets.DOCKERHUB_USERNAME }}/songservice:latest
+                    kubectl set image deployment/song-service song-service=${{ secrets.DOCKERHUB_USERNAME }}/songservice:${{ github.run_number }}
                   fi
                   if [[ "${{ needs.detect-changes.outputs.SongMetaService }}" == "true" ]]; then
-                    kubectl set image deployment/song-meta-service song-meta-service=${{ secrets.DOCKERHUB_USERNAME }}/songmetaservice:latest
+                    kubectl set image deployment/song-meta-service song-meta-service=${{ secrets.DOCKERHUB_USERNAME }}/songmetaservice:${{ github.run_number }}
                   fi
                   if [[ "${{ needs.detect-changes.outputs.AuthService }}" == "true" ]]; then
-                    kubectl set image deployment/auth-service auth-service=${{ secrets.DOCKERHUB_USERNAME }}/authservice:latest
+                    kubectl set image deployment/auth-service auth-service=${{ secrets.DOCKERHUB_USERNAME }}/authservice:${{ github.run_number }}
                   fi
                   if [[ "${{ needs.detect-changes.outputs.UserService }}" == "true" ]]; then
-                    kubectl set image deployment/user-service user-service=${{ secrets.DOCKERHUB_USERNAME }}/userservice:latest
+                    kubectl set image deployment/user-service user-service=${{ secrets.DOCKERHUB_USERNAME }}/userservice:${{ github.run_number }}
                   fi
                   if [[ "${{ needs.detect-changes.outputs.LoggingService }}" == "true" ]]; then
-                    kubectl set image deployment/logging-service logging-service=${{ secrets.DOCKERHUB_USERNAME }}/loggingservice:latest
+                    kubectl set image deployment/logging-service logging-service=${{ secrets.DOCKERHUB_USERNAME }}/loggingservice:${{ github.run_number }}
                   fi
 
             - name: Wait for deployment rollout
