@@ -454,6 +454,15 @@ jobs:
                   echo "AZURE_STORAGE_CONNECTION_STRING=${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}" >> .env
                   echo "REACT_APP_GATEWAY_URL=http://localhost:8085" >> .env
 
+            - name: Install docker-compose
+              run: |
+                  sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                  sudo chmod +x /usr/local/bin/docker-compose
+                  docker-compose --version
+
+            - name: Start all services with Docker Compose
+              run: docker-compose up -d --build
+
             - name: Start all services with Docker Compose
               run: docker-compose up -d --build
 
