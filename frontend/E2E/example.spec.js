@@ -10,11 +10,11 @@ test('Login-Logout', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Password' }).click();
     await page.getByRole('textbox', { name: 'Password' }).fill('#0909Ming');
     await page.getByTestId('login-submit').click();
-    await page.getByRole('heading', { n80ame: 'Recently Played' }).click();
+    await page.getByRole('heading', { name: 'Recently Played' }).click();
     await page.getByRole('button', { name: 'Logout' }).click();
 });
 
-test('test-page', async ({ page }) => 0{
+test('test-page', async ({ page }) => {
     await page.goto('http://localhost:80/login');
     await page.getByRole('textbox', { name: 'Email address' }).click();
     await page
